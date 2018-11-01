@@ -165,11 +165,9 @@ describe('Tabs keyboard example-index tests', () => {
     const tabsEl = await element(by.id('tabs-normal'));
     await browser.driver
       .wait(protractor.ExpectedConditions.presenceOf(tabsEl), config.waitsFor);
-    const tabElTriggerStart = await element(by.id('header-searchfield'));
-    await tabElTriggerStart.click();
-    await element(by.css('body')).sendKeys(protractor.Key.TAB);
-    await browser.driver
-      .wait(protractor.ExpectedConditions.presenceOf(element(by.className('is-focused')), config.waitsFor));
+
+    const selectedTab = await element(by.css('.tab.is-selected > a'));
+    await selectedTab.click();
   });
 
   it('Should not have errors', async () => {
@@ -180,13 +178,13 @@ describe('Tabs keyboard example-index tests', () => {
     it('Should open 5th tab, on arrow right', async () => {
       await browser.driver.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
       await browser.driver
-        .wait(protractor.ExpectedConditions.presenceOf(element(by.className('is-focused')), config.waitsFor));
+        .wait(protractor.ExpectedConditions.presenceOf(await element(by.className('is-focused')), config.waitsFor));
       await browser.driver.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
       await browser.driver
-        .wait(protractor.ExpectedConditions.presenceOf(element(by.className('is-focused')), config.waitsFor));
+        .wait(protractor.ExpectedConditions.presenceOf(await element(by.className('is-focused')), config.waitsFor));
       await browser.driver.actions().sendKeys(protractor.Key.ENTER).perform();
       await browser.driver
-        .wait(protractor.ExpectedConditions.visibilityOf(element(by.css('#tabs-normal-notes.is-visible'))), config.waitsFor);
+        .wait(protractor.ExpectedConditions.visibilityOf(await element(by.css('#tabs-normal-notes.is-visible'))), config.waitsFor);
 
       expect(await element(by.id('tabs-normal-notes')).getAttribute('class')).toContain('can-show');
       expect(await element.all(by.className('tab')).get(4).getAttribute('class')).toContain('is-selected');
@@ -485,38 +483,5 @@ describe('Tabs ajax as href tests', () => {
       .wait(protractor.ExpectedConditions.presenceOf(element(by.css('#ajaxified-tabs-tab-2.is-visible'))), config.waitsFor);
 
     expect(await element(by.id('ajaxified-tabs-tab-2')).getAttribute('innerHTML')).not.toBe('');
-  });
-});
-
-describe('Tabs click example-activated-event tests', () => {
-  beforeEach(async () => {
-    await utils.setPage('/components/tabs/example-activated-event');
-    const tabsContainerEl = await element(by.id('tabs'));
-    await browser.driver
-      .wait(protractor.ExpectedConditions.presenceOf(tabsContainerEl), config.waitsFor);
-  });
-
-  it('Should not have errors', async () => {
-    await utils.checkForErrors();
-  });
-
-  it('Should be able to call activate and beforeActivate in tabs', async () => { //eslint-disable-line
-    const opportunitiesEl = await element.all(by.css('.tab-list li')).get(2);
-
-    await browser.actions().mouseMove(opportunitiesEl).perform();
-    await browser.actions().click(opportunitiesEl).perform();
-    await opportunitiesEl.click();
-
-    const beforeActivateEl = await element.all(by.css('.toast-title')).get(0);
-    await browser.driver
-      .wait(protractor.ExpectedConditions.presenceOf(beforeActivateEl), config.waitsFor);
-
-    expect(await beforeActivateEl.getText()).toContain('beforeActivate');
-
-    const activateEl = await element.all(by.css('.toast-title')).get(1);
-    await browser.driver
-      .wait(protractor.ExpectedConditions.presenceOf(activateEl), config.waitsFor);
-
-    expect(await activateEl.getText()).toContain('activated');
   });
 });

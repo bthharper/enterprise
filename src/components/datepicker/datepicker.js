@@ -22,6 +22,7 @@ const COMPONENT_NAME = 'datepicker';
  * @param {jQuery[]|HTMLElement} element The component element.
  * @param {object} [settings] The component settings.
  * @param {boolean} [settings.showTime=false] If true the time selector will be shown.
+ * @param {boolean} [settings.useCurrentTime=false] If true current time will be used for the time portion otherwise 12:00 midnight is used
  * @param {string} [settings.timeFormat] Format to use time section fx HH:mm,
  *  defaults current locale settings.
  * @param {number} [settings.minuteInterval]
@@ -51,7 +52,6 @@ const COMPONENT_NAME = 'datepicker';
  * It requires minDate and maxDate for the feature to activate.
  * For example if you have more non specific dates to disable then enable ect.
  * @param {boolean} [settings.showLegend=false] If true a legend is show to associate dates.
- * @param {boolean} [settings.customValidation=false] If true the internal validation is disabled.
  * @param {boolean} [settings.showMonthYearPicker=false] If true the month and year will render as dropdowns.
  * @param {boolean} [settings.hideDays=false] If true the days portion of the calendar will be hidden.
  *  Usefull for Month/Year only formats.
@@ -76,10 +76,11 @@ const COMPONENT_NAME = 'datepicker';
  * @param {boolean} [settings.useUTC=false] If true the dates will use UTC format. This is only partially
  * implemented https://jira.infor.com/browse/SOHO-3437
  * @param {boolean} [settings.autoSize=false] If true the field will be sized to the width of the date.
-* @param {boolean} [settings.hideButtons=false] If true bottom and next/prev buttons will be not shown.
+ * @param {boolean} [settings.hideButtons=false] If true bottom and next/prev buttons will be not shown.
  */
 const DATEPICKER_DEFAULTS = {
   showTime: false,
+  useCurrentTime: false,
   timeFormat: undefined,
   minuteInterval: undefined,
   secondInterval: undefined,
@@ -96,7 +97,6 @@ const DATEPICKER_DEFAULTS = {
     restrictMonths: false
   },
   showLegend: false,
-  customValidation: false,
   showMonthYearPicker: false,
   hideDays: false,
   advanceMonths: 5,
@@ -591,8 +591,6 @@ DatePicker.prototype = {
   mask() {
     this.setFormat();
     const s = this.settings;
-    const customValidation = this.element.attr('data-validate');
-    const customEvents = this.element.attr('data-validation-events');
     const maskOptions = {
       process: 'date',
       keepCharacterPositions: true,
@@ -610,21 +608,6 @@ DatePicker.prototype = {
       events = { rangeDate: 'change blur' };
     }
 
-    if (customValidation === 'required' && !customEvents) {
-      validation = `${customValidation} ${validation}`;
-      $.extend(events, { required: 'change blur' });
-    } else if (!!customValidation && !!customEvents) {
-      // Remove default validation, if found "no-default-validation" string in "data-validate" attr
-      if (customValidation.indexOf('no-default-validation') > -1) {
-        validation = customValidation.replace(/no-default-validation/g, '');
-        events = $.fn.parseOptions(this.element, 'data-validation-events');
-      } else {
-        // Keep default validation along custom validation
-        validation = `${customValidation} ${validation}`;
-        $.extend(events, $.fn.parseOptions(this.element, 'data-validation-events'));
-      }
-    }
-
     maskOptions.processOnInitialize = false;
 
     if (this.isFullMonth) {
@@ -633,7 +616,7 @@ DatePicker.prototype = {
       this.element.mask(maskOptions);
     }
 
-    if (!s.customValidation) {
+    if (!this.element[0].getAttribute('data-validate')) {
       this.element.attr({
         'data-validate': validation,
         'data-validation-events': JSON.stringify(events)
@@ -778,7 +761,7 @@ DatePicker.prototype = {
     // Set timepicker
     if (this.settings.showTime) {
       // Set to 12:00
-      if (this.element.val() === '' && this.currentDate && this.currentDate.getDate()) {
+      if (this.element.val() === '' && this.currentDate && this.currentDate.getDate() && !this.settings.useCurrentTime) {
         this.currentDate.setHours(0);
         this.currentDate.setMinutes(0);
         this.currentDate.setSeconds(0);
@@ -1529,7 +1512,10 @@ DatePicker.prototype = {
   setToday() {
     const s = this.settings;
     this.currentDate = new Date();
-    this.currentDate.setHours(0, 0, 0, 0);
+
+    if (!this.settings.useCurrentTime) {
+      this.currentDate.setHours(0, 0, 0, 0);
+    }
 
     if (this.element.val() !== '') {
       if (this.timepicker && this.timepicker.hourSelect) {
@@ -1547,8 +1533,14 @@ DatePicker.prototype = {
 
     if (this.isIslamic) {
       const islamicDateParts = this.conversions.fromGregorian(this.currentDate);
-      this.currentDateIslamic =
-        new Date(islamicDateParts[0], islamicDateParts[1], islamicDateParts[2]);
+      this.currentDateIslamic = new Date(
+        islamicDateParts[0],
+        islamicDateParts[1],
+        islamicDateParts[2],
+        this.currentDate.getHours(),
+        this.currentDate.getMinutes(),
+        this.currentDate.getSeconds(),
+      );
     }
 
     if (this.isOpen()) {

@@ -51,6 +51,63 @@ describe('Datagrid index tests', () => {
   });
 });
 
+describe('Datagrid grouping with paging tests', () => {
+  beforeEach(async () => {
+    await utils.setPage('/components/datagrid/example-grouping-paging');
+
+    const datagridEl = await element(by.id('datagrid'));
+    await browser.driver
+      .wait(protractor.ExpectedConditions.presenceOf(datagridEl), config.waitsFor);
+  });
+
+  it('Should not have errors', async () => {
+    await utils.checkForErrors();
+  });
+
+  it('Should handle click', async () => {
+    const cell = '#datagrid .datagrid-body tbody tr:nth-child(2) td:nth-child(2)';
+
+    expect(await element(by.css(cell)).getText()).toEqual('214220');
+    await element(by.css(cell)).click();
+
+    expect(await element(by.css(cell)).getAttribute('tabindex')).toEqual('0');
+
+    element(by.css('.pager-next')).click();
+
+    await browser.driver
+      .wait(protractor.ExpectedConditions.elementToBeClickable(await element(by.css('.pager-prev'))), config.waitsFor);
+
+    expect(await element(by.css(cell)).getText()).toEqual('214225');
+    await element(by.css(cell)).click();
+
+    expect(await element(by.css(cell)).getAttribute('tabindex')).toEqual('0');
+  });
+
+  it('Should handle selection', async () => {
+    const cell = '#datagrid .datagrid-body tbody tr:nth-child(2) td:nth-child(2)';
+    const row = '#datagrid .datagrid-body tbody tr:nth-child(2)';
+    await element(by.css(cell)).click();
+
+    expect(await element(by.css(row)).getAttribute('class')).toMatch('is-selected');
+
+    await element(by.css(cell)).click();
+
+    expect(await element(by.css(row)).getAttribute('class')).not.toMatch('is-selected');
+
+    element(by.css('.pager-next')).click();
+
+    await browser.driver
+      .wait(protractor.ExpectedConditions.elementToBeClickable(await element(by.css('.pager-prev'))), config.waitsFor);
+    await element(by.css(cell)).click();
+
+    expect(await element(by.css(row)).getAttribute('class')).toMatch('is-selected');
+
+    await element(by.css(cell)).click();
+
+    expect(await element(by.css(row)).getAttribute('class')).not.toMatch('is-selected');
+  });
+});
+
 describe('Datagrid mixed selection tests', () => {
   beforeEach(async () => {
     await utils.setPage('/components/datagrid/example-mixed-selection');
@@ -916,5 +973,65 @@ describe('Datagrid tooltip tests', () => {
     tooltip = await element(by.id('tooltip'));
 
     expect(await tooltip.getAttribute('class')).not.toContain('is-hidden');
+  });
+});
+
+describe('Datagrid Row Activation tests', () => {
+  beforeEach(async () => {
+    await utils.setPage('/components/datagrid/test-tree-row-activated');
+
+    const datagridEl = await element(by.id('datagrid'));
+    await browser.driver
+      .wait(protractor.ExpectedConditions.presenceOf(datagridEl), config.waitsFor);
+  });
+
+  it('Should not have errors', async () => {
+    await utils.checkForErrors();
+  });
+
+  it('Should show rowactivated', async () => {
+    let row = await element(by.css('tbody tr[aria-rowindex="6"]'));
+
+    expect(await row.getAttribute('class')).not.toContain('is-rowactivated');
+    const cell = await element(by.css('tbody tr[aria-rowindex="6"] td[aria-colindex="2"]'));
+    await cell.click();
+    row = await element(by.css('tbody tr[aria-rowindex="6"]'));
+
+    expect(await row.getAttribute('class')).toContain('is-rowactivated');
+  });
+});
+
+describe('Datagrid Row Indeterminate Activation tests', () => {
+  beforeEach(async () => {
+    await utils.setPage('/components/datagrid/example-paging-indeterminate-landmark');
+
+    const datagridEl = await element(by.id('datagrid'));
+    await browser.driver
+      .wait(protractor.ExpectedConditions.presenceOf(datagridEl), config.waitsFor);
+  });
+
+  it('Should not have errors', async () => {
+    await utils.checkForErrors();
+  });
+
+  it('Should show activation row for indeterminate with mixed selection', async () => {
+    await browser.driver
+      .wait(protractor.ExpectedConditions.visibilityOf(await element(by.css('tbody tr[aria-rowindex="2"]'))), config.waitsFor);
+    let row = await element(by.css('tbody tr[aria-rowindex="2"]'));
+
+    expect(await row.getAttribute('class')).not.toContain('is-rowactivated');
+    const cell = await element(by.css('tbody tr[aria-rowindex="2"] td[aria-colindex="2"]'));
+    await cell.click();
+    await browser.driver
+      .wait(protractor.ExpectedConditions.visibilityOf(await element(by.css('tbody tr[aria-rowindex="2"]'))), config.waitsFor);
+    row = await element(by.css('tbody tr[aria-rowindex="2"]'));
+
+    expect(await row.getAttribute('class')).toContain('is-rowactivated');
+    await element(by.css('li.pager-next a')).click();
+    await browser.driver
+      .wait(protractor.ExpectedConditions.visibilityOf(await element(by.css('tbody tr[aria-rowindex="2"]'))), config.waitsFor);
+    row = await element(by.css('tbody tr[aria-rowindex="2"]'));
+
+    expect(await row.getAttribute('class')).toContain('is-rowactivated');
   });
 });

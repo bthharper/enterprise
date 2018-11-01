@@ -396,7 +396,7 @@ describe('Datepicker Timeformat Tests', () => {
     expect(await element(by.id('dp1')).getAttribute('value')).toEqual(`${(testDate.getFullYear())}/${testDate.getMonth() + 1}/${testDate.getDate()} 00:00`);
   });
 
-  it('Should set locale time when selected ', async () => {
+  it('Should set locale time to midnight when selected ', async () => {
     const datepickerEl = await element(by.id('dp2'));
     await datepickerEl.sendKeys(protractor.Key.ARROW_DOWN);
 
@@ -409,6 +409,29 @@ describe('Datepicker Timeformat Tests', () => {
     testDate.setSeconds(0);
 
     expect(await element(by.id('dp2')).getAttribute('value')).toEqual(`${(testDate.getMonth() + 1)}/${testDate.getDate()}/${testDate.getFullYear()} 12:00 AM`);
+  });
+
+  it('Should set locale time to current time when selected ', async () => {
+    const datepickerEl = await element(by.id('dp3'));
+    await datepickerEl.sendKeys(protractor.Key.ARROW_DOWN);
+
+    const todayEl = await element(by.css('button.is-today'));
+    await todayEl.click();
+
+    const testDate = new Date();
+    let hours = testDate.getHours();
+    let minutes = testDate.getMinutes();
+    let amPm = 'AM';
+
+    if (hours > 11) {
+      hours -= hours > 12 ? 12 : 0;
+      amPm = 'PM';
+    }
+    if (minutes.toString().length === 1) {
+      minutes = `0${minutes}`;
+    }
+
+    expect(await element(by.id('dp3')).getAttribute('value')).toEqual(`${(testDate.getMonth() + 1)}/${testDate.getDate()}/${testDate.getFullYear()} ${hours}:${minutes} ${amPm}`);
   });
 });
 
@@ -549,23 +572,58 @@ describe('Datepicker Month Format Tests', () => {
 
 describe('Datepicker Custom Validation Tests', () => {
   beforeEach(async () => {
-    await utils.setPage('/components/datepicker/example-custom-validation');
+    await utils.setPage('/components/datepicker/example-validation');
   });
 
-  it('Should be Able to do custom validation', async () => {
+  it('Should be able to do default invalid date validation', async () => {
     const datepickerEl = await element(by.id('date-field-1'));
-    await datepickerEl.sendKeys('7/18/2018');
-    await datepickerEl.sendKeys(protractor.Key.TAB);
+    await datepickerEl.sendKeys('7/18/1');
+    await datepickerEl.sendKeys(protractor.Key.ENTER);
 
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Invalid Date');
+    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
+  });
+
+  it('Should be able to do unavailable date validation', async () => {
+    const datepickerEl = await element(by.id('date-field-2'));
+    await datepickerEl.sendKeys('10/6/2018');
+    await datepickerEl.sendKeys(protractor.Key.TAB);
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Unavailable Date');
+    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
+  });
+
+  it('Should be able to do custom validation', async () => {
     expect(await element(by.css('.message-text')).isPresent()).toBe(false);
 
-    const datepicker2El = await element(by.id('date-field-2'));
+    const datepicker2El = await element(by.id('date-field-3'));
     await datepicker2El.sendKeys('7/18/2018');
     await datepicker2El.sendKeys(protractor.Key.TAB);
 
     await browser.driver.sleep(config.sleep);
 
     expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Test Error - Anything you enter will be wrong');
+    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
+  });
+
+  it('Should be able to do unavailable required and date validation', async () => {
+    const datepickerEl = await element(by.id('date-field-4'));
+    await datepickerEl.clear();
+    await datepickerEl.sendKeys(protractor.Key.TAB);
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Required');
+    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
+
+    await datepickerEl.clear();
+    await datepickerEl.sendKeys('12/01');
+    await datepickerEl.sendKeys(protractor.Key.TAB);
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Invalid Date');
     expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
   });
 });

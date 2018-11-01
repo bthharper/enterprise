@@ -777,6 +777,10 @@ Editor.prototype = {
         self.execAction(action, e);
       }
 
+      if (self.isIe) {
+        self.getCurrentElement().trigger('change');
+      }
+
       return false;
     });
 
@@ -1974,7 +1978,11 @@ Editor.prototype = {
     }
 
     // Some browser (IE, Firefox) use attr 'align' instead style `text-align`
-    parentEl.removeAttribute('align');
+    const gParentEl = parentEl.parentNode;
+    if (gParentEl !== this.element[0]) {
+      const alignAttrElems = [].slice.call(gParentEl.querySelectorAll('[align]'));
+      alignAttrElems.forEach(el => el.removeAttribute('align'));
+    }
     document.execCommand('removeFormat', false, null);
 
     // Restore style `text-align`, some browser (chrome, safari) clear `text-align` on parent node with command `removeFormat`
@@ -2059,6 +2067,13 @@ Editor.prototype = {
         document.execCommand('fontSize', false, '2');
         const parent = this.getSelectionParentElement().parentNode;
         const els = parent.getElementsByTagName('font');
+
+        // Clearing all the background style in any element node in selection's parent
+        for (let i = 0, j = els.length; i < j; i++) {
+          if (els[i].hasAttribute('style')) {
+            els[i].style.backgroundColor = '';
+          }
+        }
 
         // Using timeout, firefox not executes with current call stack
         setTimeout(() => {
