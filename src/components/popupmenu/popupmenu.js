@@ -88,7 +88,9 @@ PopupMenu.prototype = {
     // Allow for an external click event to be passed in from outside this code.
     // This event can be used to pass clientX/clientY coordinates for mouse cursor positioning.
     if (this.settings.trigger === 'immediate') {
-      this.open(this.settings.eventObj);
+      if (this.menu.length) {
+        this.open(this.settings.eventObj);
+      }
     }
 
     // Use some css rules on submenu parents
@@ -864,8 +866,9 @@ PopupMenu.prototype = {
     // http://access.aol.com/dhtml-style-guide-working-group/#popupmenu
 
     // Handle Events in Anchors
-    this.menu.on('click.popupmenu', 'a', function (e) {
-      self.handleItemClick(e, $(this));
+    this.menu.on('click.popupmenu', 'li', function (e) {
+      const a = $(this).find('a');
+      self.handleItemClick(e, a);
     });
 
     const excludes = 'li:not(.separator):not(.hidden):not(.heading):not(.group):not(.is-disabled)';
@@ -1543,9 +1546,12 @@ PopupMenu.prototype = {
      * @property {object} event - The jquery event object
      * @property {object} this menu instance
      */
-    let canOpen = this.element.triggerHandler('beforeopen', [this.menu]);
-    if (canOpen === false) {
-      return;
+    let canOpen = true;
+    if (!this.element.hasClass('autocomplete')) {
+      canOpen = this.element.triggerHandler('beforeopen', [this.menu]);
+      if (canOpen === false) {
+        return;
+      }
     }
 
     // Check external AJAX source, if applicable
@@ -1620,6 +1626,8 @@ PopupMenu.prototype = {
     // Close on Document Click ect..
     setTimeout(() => {
       $(document).on(`touchend.popupmenu.${self.id} click.popupmenu.${self.id}`, (thisE) => {
+        const isPicker = (self.settings.menu === 'colorpicker-menu');
+
         if (thisE.button === 2) {
           return;
         }
@@ -1630,12 +1638,16 @@ PopupMenu.prototype = {
         }
 
         // Click functionality will toggle the menu - otherwise it closes and opens
-        if ($(thisE.target).is(self.element)) {
+        if ($(thisE.target).is(self.element) && !isPicker) {
           return;
         }
 
         if ($(thisE.target).closest('.popupmenu').length === 0) {
           self.close(true, self.settings.trigger === 'rightClick');
+        }
+
+        if ($(thisE.target).hasClass('colorpicker')) {
+          self.close();
         }
       });
 
@@ -2133,6 +2145,9 @@ PopupMenu.prototype = {
       return;
     }
 
+    if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+      return;
+    }
     this.element.focus();
   },
 

@@ -526,6 +526,9 @@ Validator.prototype = {
 
           self.addPositive(field);
         }
+      } else if (!validationType.errorsForm) {
+        // Rules that do not error the form need to resolve
+        dfrd.resolve();  
       }
 
       self.setIconOnParent(field, rule.type);
@@ -798,8 +801,11 @@ Validator.prototype = {
       tooltipAPI.hide();
     });
 
-    if (showTooltip && tooltipAPI) {
+    if (tooltipAPI) {
       field.attr('data-error-type', 'tooltip');
+    }
+
+    if (showTooltip && tooltipAPI) {
       tooltipAPI.show();
     }
   },
