@@ -632,6 +632,10 @@ Accordion.prototype = {
   * @returns {boolean} Whether or not the element is expanded.
   */
   isExpanded(header) {
+    if (header && header instanceof Element) {
+      header = $(header);
+    }
+
     if (!header || !header.length) {
       return;
     }
@@ -670,9 +674,13 @@ Accordion.prototype = {
     }
 
     const self = this;
-    const pane = header.nextAll().not('.audible').first('.accordion-pane');
+    let pane = header.nextAll().not('.audible').first('.accordion-pane');
     const a = header.children('a');
     const dfd = $.Deferred();
+
+    if (this.settings.allowOnePane) {
+      pane = header.next('.accordion-pane').not('.audible');
+    }
 
     const canExpand = this.element.triggerHandler('beforeexpand', [a]);
     if (canExpand === false) {
@@ -743,8 +751,10 @@ Accordion.prototype = {
       }
 
       if (pane.hasClass('no-transition')) {
-        pane[0].style.display = 'block';
-        pane[0].style.height = 'auto';
+        for (let i = 0; i < pane.length; i++) {
+          pane[i].style.display = 'block';
+          pane[i].style.height = 'auto';
+        }
         handleAfterExpand();
       } else {
         pane.one('animateopencomplete', handleAfterExpand).css('display', 'block').animateOpen();
