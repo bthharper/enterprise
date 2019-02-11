@@ -1,4 +1,5 @@
 const { browserStackErrorReporter } = requireHelper('browserstack-error-reporter');
+const config = requireHelper('e2e-config');
 const utils = requireHelper('e2e-utils');
 requireHelper('rejection');
 
@@ -26,8 +27,10 @@ describe('Personalization tests', () => {
     const chosenTheme = await element.all(by.css('.popupmenu li.is-checked a[data-theme]')).getAttribute('data-theme');
 
     expect(await element.all(by.css('html')).get(0).getAttribute('class')).toContain(chosenTheme[0]);
+    await browser.driver
+      .wait(protractor.ExpectedConditions.stalenessOf(await element(by.css('.personalize-overlay'))), config.waitsFor);
 
-    reinitButton.click();
+    await reinitButton.click();
 
     expect(await element.all(by.css('html')).get(0).getAttribute('class')).toContain(chosenTheme[0]);
   });
@@ -43,9 +46,11 @@ describe('Personalization tests', () => {
     await colorChoices[randomIndex].click();
 
     const beforeInitSheet = await element(by.id('soho-personalization'));
+    await browser.driver
+      .wait(protractor.ExpectedConditions.stalenessOf(await element(by.css('.personalize-overlay'))), config.waitsFor);
 
-    reinitButton.click();
+    await reinitButton.click();
 
-    expect(element(by.id('soho-personalization')).getText()).toEqual(beforeInitSheet.getText());
+    expect(await element(by.id('soho-personalization')).getText()).toEqual(beforeInitSheet.getText());
   });
 });

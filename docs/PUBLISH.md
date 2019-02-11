@@ -7,7 +7,8 @@ To do a dev release, publish a dated semver to npm.
 1. Make sure you are on `master` and its clean
 1. Change the `package.json` version to append the date, i.e. `4.7.0-dev.YYYYMMDD`
 1. Save the `package.json` file (**DO NOT** commit it)
-1. `npm publish --tag=dev`
+1. `npm run build && npm run zip-dist` to build
+1. `npm publish --tag=dev` to publish
 1. Undo the version change/reset your branch
 
 ## Production Release (tagged)
@@ -45,6 +46,10 @@ git config --global credential.helper wincred
 ### Make sure you are logged into NPM
 
 - Verify you are logged into NPM in your terminal to avoid `release-it` dying at the end.
+
+### Make sure you have Jenkins variables set
+
+- Check that you have both `JENKINS_JOB_TOKEN` and `JENKINS_API_TOKEN` exported
 
 ## Release
 

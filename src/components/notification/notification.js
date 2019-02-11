@@ -18,7 +18,7 @@ const NOTIFICATION_DEFAULTS = {
  * @param {string} element The plugin element for the constuctor
  * @param {string} [settings] The settings element.
  * @param {string} [settings.message] The text message to show in the notification.
- * @param {string} [settings.type] The message type, this influences the icon and color, possible types are 'error', 'alert', 'info' and 'confirm'
+ * @param {string} [settings.type] The message type, this influences the icon and color, possible types are 'error', 'alert', 'info' and 'success'
  * @param {string} [settings.parent] The jQuery selector to find where to insert the message into (prepended). By default this will appear under the .header on the page.
  * @param {string} [settings.link] The url to use for the hyperlink
  * @param {string} [settings.linkText] The text to show in the hyperlink. Leave empty for no link.
@@ -34,6 +34,7 @@ Notification.prototype = {
 
   /**
    * Do initialization, build up and / or add events ect.
+   * @private
    * @returns {object} The Notification prototype, useful for chaining.
    */
   init() {
@@ -44,8 +45,8 @@ Notification.prototype = {
 
   /**
    * Add any needed markup to the component.
-   * @returns {object} The Component prototype, useful for chaining.
    * @private
+   * @returns {object} The Component prototype, useful for chaining.
    */
   build() {
     this.notificationEl = document.createElement('div');
@@ -68,8 +69,8 @@ Notification.prototype = {
 
   /**
    * Sets up event handlers for this component and its sub-elements.
-   * @returns {object} The Component prototype, useful for chaining.
    * @private
+   * @returns {object} The Component prototype, useful for chaining.
    */
   handleEvents() {
     const self = this;
@@ -102,8 +103,8 @@ Notification.prototype = {
 
   /**
    * Simple Teardown - remove events & rebuildable markup.
-   * @returns {object} The Component prototype, useful for chaining.
    * @private
+   * @returns {object} The Component prototype, useful for chaining.
    */
   teardown() {
     this.element.off(`updated.${COMPONENT_NAME}`);
@@ -112,8 +113,7 @@ Notification.prototype = {
   },
 
   /**
-   * Teardown - Remove added markup and events.
-   * @private
+   * Destroy and remove added markup and detatch events.
    */
   destroy() {
     if (this.notificationEl && this.notificationEl.parentNode) {

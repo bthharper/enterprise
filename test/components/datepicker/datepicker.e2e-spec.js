@@ -7,7 +7,7 @@ jasmine.getEnv().addReporter(browserStackErrorReporter);
 
 describe('Datepicker example-index tests', () => {
   beforeEach(async () => {
-    await utils.setPage('/components/datepicker/example-index?nofrills=true');
+    await utils.setPage('/components/datepicker/example-index?layout=nofrills');
   });
 
   it('Should not have errors', async () => {
@@ -427,6 +427,16 @@ describe('Datepicker disabled date tests', () => {
     expect(await element.all(by.css('.monthview-table td.is-disabled')).count()).toEqual(14);
     expect(await element.all(by.css('.monthview-table td:not(.is-disabled)')).count()).toEqual(28);
   });
+
+  it('Should show errors on disabled dates', async () => {
+    await element(by.css('#date-field')).clear();
+    await element(by.css('#date-field')).sendKeys('5/2/2015');
+    await element(by.css('#date-field')).sendKeys(protractor.Key.TAB);
+    await browser.driver
+      .wait(protractor.ExpectedConditions.visibilityOf(await element(by.css('.error-message'))), config.waitsFor);
+
+    expect(await element(by.css('.error-message')).getText()).toEqual('Unavailable Date');
+  });
 });
 
 describe('Datepicker Legend Tests', () => {
@@ -445,76 +455,6 @@ describe('Datepicker Legend Tests', () => {
   });
 });
 
-describe('Datepicker Modal Test', () => {
-  beforeEach(async () => {
-    await utils.setPage('/components/datepicker/test-modal');
-  });
-
-  it('Should work on a modal', async () => {
-    await element(by.css('.btn-secondary')).click();
-    await browser.driver.sleep(config.sleep);
-
-    const datepickerEl = await element(by.id('date-field'));
-    await datepickerEl.sendKeys(protractor.Key.ARROW_DOWN);
-
-    await browser.driver.sleep(config.sleep);
-    const focusTD = await element(by.css('#monthview-popup td.is-selected'));
-    await focusTD.sendKeys(protractor.Key.ESCAPE);
-
-    await browser.driver.sleep(config.sleep);
-
-    expect(await element(by.id('modal-1')).isDisplayed()).toBeTruthy();
-    await element(by.id('context-name')).sendKeys(protractor.Key.ESCAPE);
-
-    await browser.driver.sleep(config.sleep);
-
-    expect(await element(by.id('modal-1')).isDisplayed()).toBeFalsy();
-  });
-});
-
-describe('Datepicker Month Year Picker Tests', () => {
-  beforeEach(async () => {
-    await utils.setPage('/components/datepicker/example-month-year-format');
-    const Date = () => {  //eslint-disable-line
-      return new Date(2018, 1, 10);
-    };
-  });
-
-  it('Should be able to function as month/year picker', async () => {
-    const datepickerEl = await element(by.id('month-year'));
-    await datepickerEl.sendKeys(protractor.Key.ARROW_DOWN);
-
-    const dropdownEl = await element(by.css('#month-dropdown + .dropdown-wrapper div[aria-controls="dropdown-list"]'));
-    await dropdownEl.sendKeys(protractor.Key.ARROW_DOWN);
-    await dropdownEl.sendKeys(protractor.Key.ARROW_DOWN);
-    await dropdownEl.sendKeys(protractor.Key.ENTER);
-
-    const buttonEl = await element(by.css('.select-month.btn-tertiary'));
-    await buttonEl.click();
-
-    expect(await element(by.id('month-year')).getAttribute('value')).toEqual('12/2018');
-  });
-
-  it('Should be able to function as month/year picker long', async () => {
-    const datepickerEl = await element(by.id('month-year-long'));
-    await datepickerEl.sendKeys(protractor.Key.ARROW_DOWN);
-
-    const dropdownEl = await element(by.css('#month-dropdown + .dropdown-wrapper div[aria-controls="dropdown-list"]'));
-    await dropdownEl.sendKeys(protractor.Key.ARROW_DOWN);
-    await dropdownEl.sendKeys(protractor.Key.ARROW_DOWN);
-    await dropdownEl.sendKeys(protractor.Key.ENTER);
-
-    const buttonEl = await element(by.css('.select-month.btn-tertiary'));
-    await buttonEl.click();
-
-    const testDate = new Date();
-    await testDate.setDate(1);
-    await testDate.setMonth(testDate.getMonth());
-
-    expect(await element(by.id('month-year-long')).getAttribute('value')).toEqual(testDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short' }));
-  });
-});
-
 describe('Datepicker Month Year Changer Tests', () => {
   beforeEach(async () => {
     await utils.setPage('/components/datepicker/example-month-year-picker');
@@ -525,17 +465,20 @@ describe('Datepicker Month Year Changer Tests', () => {
 
   it('Should be able to change month and year from the pickers', async () => {
     const datepickerEl = await element(by.id('date-field-normal'));
+    await datepickerEl.sendKeys('10/1/2018');
     await datepickerEl.sendKeys(protractor.Key.ARROW_DOWN);
     await browser.driver.sleep(config.sleep);
 
-    const dropdownEl = await element(by.css('#month-dropdown + .dropdown-wrapper div[aria-controls="dropdown-list"]'));
+    let dropdownEl = await element(by.css('#month-dropdown + .dropdown-wrapper div[aria-controls="dropdown-list"]'));
     await dropdownEl.sendKeys(protractor.Key.ARROW_DOWN);
+    dropdownEl = await element(by.css('.dropdown-search'));
     await dropdownEl.sendKeys(protractor.Key.ARROW_DOWN);
     await dropdownEl.sendKeys(protractor.Key.ENTER);
     await browser.driver.sleep(config.sleep);
 
-    const yearEl = await element(by.css('#year-dropdown + .dropdown-wrapper div[aria-controls="dropdown-list"]'));
+    let yearEl = await element(by.css('#year-dropdown + .dropdown-wrapper div[aria-controls="dropdown-list"]'));
     await yearEl.sendKeys(protractor.Key.ARROW_DOWN);
+    yearEl = await element.all(by.css('.dropdown-search')).last();
     await yearEl.sendKeys(protractor.Key.ARROW_DOWN);
     await yearEl.sendKeys(protractor.Key.ARROW_DOWN);
     await yearEl.sendKeys(protractor.Key.ENTER);
@@ -549,11 +492,12 @@ describe('Datepicker Month Year Changer Tests', () => {
     await lastButtonEl.sendKeys(protractor.Key.ENTER);
     await browser.driver.sleep(config.sleep);
 
+    browser.executeScript('$("#dropdown-list").hide()');
     const buttonEl = await element.all(by.css('.monthview-table td:not(.alternate)')).first();
     await buttonEl.click();
     await browser.driver.sleep(config.sleep);
 
-    expect(await element(by.id('date-field-normal')).getAttribute('value')).toEqual('12/1/2018');
+    expect(await element(by.id('date-field-normal')).getAttribute('value')).toEqual('11/1/2020');
   });
 });
 
@@ -579,20 +523,6 @@ describe('Datepicker Range Tests', () => {
     await testDate2.setDate(testDate3.getDate());
 
     expect(await element(by.id('range-novalue')).getAttribute('value')).toEqual(`${(testDate1.getMonth() + 1)}/1/${testDate1.getFullYear()} - ${(testDate2.getMonth() + 1)}/${testDate2.getDate()}/${testDate2.getFullYear()}`);
-  });
-});
-
-describe('Datepicker Set Value Tests', () => {
-  beforeEach(async () => {
-    await utils.setPage('/components/datepicker/test-set-value');
-  });
-
-  it('Should setValue on Various Types', async () => {
-    expect(await element(by.id('date-field')).getAttribute('value')).toEqual('5/10/2015');
-    expect(await element(by.id('date-field-2')).getAttribute('value')).toEqual('5/10/2015');
-    expect(await element(by.id('date-field-3')).getAttribute('value')).toEqual('5/10/2015');
-    expect(await element(by.id('date-field-4')).getAttribute('value')).toEqual('5/10/2015');
-    expect(await element(by.id('date-field-5')).getAttribute('value')).toEqual('5/10/2015');
   });
 });
 
@@ -640,23 +570,24 @@ describe('Datepicker Timeformat Tests', () => {
     const todayEl = await element(by.css('button.is-today'));
     const testDate = new Date();
     await todayEl.click();
+    const value = await element(by.id('dp3')).getAttribute('value');
 
     let hours = testDate.getHours();
-    let minutes = testDate.getMinutes();
+    const minutes = testDate.getMinutes();
     let amPm = 'AM';
 
     if (hours > 11) {
       hours -= hours > 12 ? 12 : 0;
       amPm = 'PM';
     }
-    if (minutes.toString().length === 1) {
-      minutes = `0${minutes}`.padStart(2, '0');
-    }
 
     expect([
-      `${(testDate.getMonth() + 1)}/${testDate.getDate()}/${testDate.getFullYear()} ${hours}:${minutes} ${amPm}`,
-      `${(testDate.getMonth() + 1)}/${testDate.getDate()}/${testDate.getFullYear()} ${hours}:${minutes - 1} ${amPm}` // for slow test
-    ]).toContain(await element(by.id('dp3')).getAttribute('value'));
+      `${(testDate.getMonth() + 1)}/${testDate.getDate()}/${testDate.getFullYear()} ${hours}:${(minutes - 2).toString().padStart(2, '0')} ${amPm}`,
+      `${(testDate.getMonth() + 1)}/${testDate.getDate()}/${testDate.getFullYear()} ${hours}:${(minutes - 1).toString().padStart(2, '0')} ${amPm}`,
+      `${(testDate.getMonth() + 1)}/${testDate.getDate()}/${testDate.getFullYear()} ${hours}:${(minutes).toString().padStart(2, '0')} ${amPm}`,
+      `${(testDate.getMonth() + 1)}/${testDate.getDate()}/${testDate.getFullYear()} ${hours}:${(minutes + 1).toString().padStart(2, '0')} ${amPm}`,
+      `${(testDate.getMonth() + 1)}/${testDate.getDate()}/${testDate.getFullYear()} ${hours}:${(minutes + 2).toString().padStart(2, '0')} ${amPm}` // for slow test on ci
+    ]).toContain(value);
   });
 });
 
@@ -680,6 +611,111 @@ describe('Datepicker Umalqura Tests', () => {
     const value = await element(by.id('islamic-date')).getAttribute('value');
 
     expect(value.substr(0, 2)).toEqual('14');
+  });
+});
+
+describe('Datepicker Month Year Picker Tests', () => {
+  beforeEach(async () => {
+    await utils.setPage('/components/datepicker/example-month-year-format');
+    const Date = () => {  //eslint-disable-line
+      return new Date(2018, 1, 10);
+    };
+  });
+
+  it('Should be able to function as month/year picker', async () => {
+    const datepickerEl = await element(by.id('month-year'));
+    await datepickerEl.sendKeys('01/2018');
+    await datepickerEl.sendKeys(protractor.Key.ARROW_DOWN);
+
+    let dropdownEl = await element(by.css('#year-dropdown + .dropdown-wrapper div[aria-controls="dropdown-list"]'));
+    await dropdownEl.click();
+    dropdownEl = await element(by.css('#dropdown-list .dropdown-search'));
+    await dropdownEl.sendKeys(protractor.Key.ARROW_DOWN);
+    await dropdownEl.sendKeys(protractor.Key.ARROW_DOWN);
+    await dropdownEl.sendKeys(protractor.Key.ENTER);
+
+    const buttonEl = await element(by.css('.select-month.btn-tertiary'));
+    await buttonEl.click();
+
+    expect(await element(by.id('month-year')).getAttribute('value')).toEqual('01/2020');
+  });
+
+  it('Should be able to function as month/year picker long', async () => {
+    const datepickerEl = await element(by.id('month-year-long'));
+    await datepickerEl.sendKeys('Oct 2018');
+    await datepickerEl.sendKeys(protractor.Key.ARROW_DOWN);
+
+    const dropdownEl = await element(by.css('#month-dropdown + .dropdown-wrapper div[aria-controls="dropdown-list"]'));
+    await dropdownEl.sendKeys(protractor.Key.ARROW_DOWN);
+    await dropdownEl.sendKeys(protractor.Key.ARROW_DOWN);
+    await dropdownEl.sendKeys(protractor.Key.ENTER);
+
+    const buttonEl = await element(by.css('.select-month.btn-tertiary'));
+    await buttonEl.click();
+
+    const testDate = new Date();
+    await testDate.setDate(1);
+    await testDate.setMonth(testDate.getMonth());
+
+    expect(await element(by.id('month-year-long')).getAttribute('value')).toEqual(testDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short' }));
+  });
+});
+
+describe('Datepicker Custom Validation Tests', () => {
+  beforeEach(async () => {
+    await utils.setPage('/components/datepicker/example-validation');
+  });
+
+  it('Should be able to do default invalid date validation', async () => {
+    const datepickerEl = await element(by.id('date-field-1'));
+    await datepickerEl.sendKeys('7/18/1');
+    await datepickerEl.sendKeys(protractor.Key.ENTER);
+
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Invalid Date');
+    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
+  });
+
+  it('Should be able to do unavailable date validation', async () => {
+    const datepickerEl = await element(by.id('date-field-2'));
+    await datepickerEl.sendKeys('10/6/2018');
+    await datepickerEl.sendKeys(protractor.Key.TAB);
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Unavailable Date');
+    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
+  });
+
+  it('Should be able to do custom validation', async () => {
+    expect(await element(by.css('.message-text')).isPresent()).toBe(false);
+
+    const datepicker2El = await element(by.id('date-field-3'));
+    await datepicker2El.sendKeys('7/18/2018');
+    await datepicker2El.sendKeys(protractor.Key.TAB);
+
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Test Error - Anything you enter will be wrong');
+    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
+  });
+
+  it('Should be able to do unavailable required and date validation', async () => {
+    const datepickerEl = await element(by.id('date-field-4'));
+    await datepickerEl.clear();
+    await datepickerEl.sendKeys(protractor.Key.TAB);
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Required');
+    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
+
+    await datepickerEl.clear();
+    await datepickerEl.sendKeys('12/01');
+    await datepickerEl.sendKeys(protractor.Key.TAB);
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Invalid Date');
+    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
   });
 });
 
@@ -755,7 +791,7 @@ describe('Datepicker Gregorian SA Tests', () => {
   });
 });
 
-describe('Datepicker Year Validation Tests', () => {
+describe('Datepicker Disabled Years Validation Tests', () => {
   beforeEach(async () => {
     await utils.setPage('/components/datepicker/test-disabled-years-validated');
   });
@@ -779,7 +815,7 @@ describe('Datepicker Year Validation Tests', () => {
   });
 });
 
-describe('Datepicker Validation Tests', () => {
+describe('Datepicker Invalid Date Tests', () => {
   beforeEach(async () => {
     await utils.setPage('/components/datepicker/test-invalid-dates');
   });
@@ -802,6 +838,33 @@ describe('Datepicker Validation Tests', () => {
 
     expect(await element(by.id('date-field')).getAttribute('value')).toEqual('11/11/2018');
     expect(await element(by.css('.message-text')).isPresent()).toBe(true);
+  });
+});
+
+describe('Datepicker Modal Test', () => {
+  beforeEach(async () => {
+    await utils.setPage('/components/datepicker/test-modal');
+  });
+
+  it('Should work on a modal', async () => {
+    await element(by.css('.btn-secondary')).click();
+    await browser.driver.sleep(config.sleep);
+
+    const datepickerEl = await element(by.id('date-field'));
+    await datepickerEl.sendKeys(protractor.Key.ARROW_DOWN);
+
+    await browser.driver.sleep(config.sleep);
+    const focusTD = await element(by.css('#monthview-popup td.is-selected'));
+    await focusTD.sendKeys(protractor.Key.ESCAPE);
+
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element(by.id('modal-1')).isDisplayed()).toBeTruthy();
+    await element(by.id('context-name')).sendKeys(protractor.Key.ESCAPE);
+
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element(by.id('modal-1')).isDisplayed()).toBeFalsy();
   });
 });
 
@@ -860,65 +923,38 @@ describe('Datepicker restrict month selection tests', () => {
   });
 });
 
-describe('Datepicker Custom Validation Tests', () => {
+describe('Datepicker set first day of week tests', () => {
   beforeEach(async () => {
-    await utils.setPage('/components/datepicker/example-validation');
+    await utils.setPage('/components/datepicker/test-set-first-day-of-week');
   });
 
-  it('Should be able to do default invalid date validation', async () => {
-    const datepickerEl = await element(by.id('date-field-1'));
-    await datepickerEl.sendKeys('7/18/1');
-    await datepickerEl.sendKeys(protractor.Key.ENTER);
+  it('Should set first day of week', async () => {
+    const triggerEl = await element(by.tagName('thead'));
+    await element(by.css('#date-field-normal + .icon')).click();
 
-    await browser.driver.sleep(config.sleep);
+    expect(await element(by.css('.is-focused'))).toBeTruthy();
 
-    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Invalid Date');
-    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
-  });
+    const testEl = await triggerEl.all(by.tagName('th')).get(0);
 
-  it('Should be able to do unavailable date validation', async () => {
-    const datepickerEl = await element(by.id('date-field-2'));
-    await datepickerEl.sendKeys('10/6/2018');
-    await datepickerEl.sendKeys(protractor.Key.TAB);
-    await browser.driver.sleep(config.sleep);
-
-    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Unavailable Date');
-    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
-  });
-
-  it('Should be able to do custom validation', async () => {
-    expect(await element(by.css('.message-text')).isPresent()).toBe(false);
-
-    const datepicker2El = await element(by.id('date-field-3'));
-    await datepicker2El.sendKeys('7/18/2018');
-    await datepicker2El.sendKeys(protractor.Key.TAB);
-
-    await browser.driver.sleep(config.sleep);
-
-    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Test Error - Anything you enter will be wrong');
-    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
-  });
-
-  it('Should be able to do unavailable required and date validation', async () => {
-    const datepickerEl = await element(by.id('date-field-4'));
-    await datepickerEl.clear();
-    await datepickerEl.sendKeys(protractor.Key.TAB);
-    await browser.driver.sleep(config.sleep);
-
-    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Required');
-    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
-
-    await datepickerEl.clear();
-    await datepickerEl.sendKeys('12/01');
-    await datepickerEl.sendKeys(protractor.Key.TAB);
-    await browser.driver.sleep(config.sleep);
-
-    expect(await element.all(by.css('.message-text')).last().getText()).toEqual('Invalid Date');
-    expect(await element.all(by.css('.message-text')).last(1).isPresent()).toBe(true);
+    expect(await testEl.getText()).toEqual('M');
   });
 });
 
-describe('Datepicker Time Format Tests', () => {
+describe('Datepicker Set Value Tests', () => {
+  beforeEach(async () => {
+    await utils.setPage('/components/datepicker/test-set-value');
+  });
+
+  it('Should setValue on Various Types', async () => {
+    expect(await element(by.id('date-field')).getAttribute('value')).toEqual('5/10/2015');
+    expect(await element(by.id('date-field-2')).getAttribute('value')).toEqual('5/10/2015');
+    expect(await element(by.id('date-field-3')).getAttribute('value')).toEqual('5/10/2015');
+    expect(await element(by.id('date-field-4')).getAttribute('value')).toEqual('5/10/2015');
+    expect(await element(by.id('date-field-5')).getAttribute('value')).toEqual('5/10/2015');
+  });
+});
+
+describe('Datepicker Time in Cs-Cz Format Tests', () => {
   beforeEach(async () => {
     await utils.setPage('/components/datepicker/test-with-time-cs-CZ');
   });

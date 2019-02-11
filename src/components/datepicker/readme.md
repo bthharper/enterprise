@@ -6,31 +6,33 @@ demo:
   - name: Simple Date Picker Example
     slug: example-index
   pages:
-  - name: Month/Year Picker
-    slug: example-month-year-picker.html
-  - name: Range Selection
-    slug: example-range.html
-  - name: Month/Year Only Selection
-    slug: example-month-year-format.html
   - name: Anniversary Format (Month, Year)
     slug: example-anniversay-format
+  - name: Specify a custom or ISO Format
+    slug: example-custom-format
+  - name: Disabling Calendar Days
+    slug: example-disabled-dates
   - name: Date Picker With Legend
     slug: example-legend
+  - name: Selection only Month and Year
+    slug: example-month-year-format
+  - name: Showing a Picker to Choose Month and Year
+    slug: example-month-year-picker
+  - name: Date Range Selection
+    slug: example-range
+  - name: Change Field Widths
+    slug: example-sizes
   - name: Date Picker With Time
-    slug: example-timeformat.html
-  - name: Disabling Calendar Days
-    slug: example-disabled-dates.html
-  - name: Various Sizes
-    slug: example-sizes.html
+    slug: example-timeformat
   - name: Islamic Umalqura Calendar
-    slug: example-umalqura.html
+    slug: example-umalqura
   - name: Using Validation
-    slug: example-validation.html
+    slug: example-validation
 ---
 
-The setup for a datepicker only involves creating an `<input>` with the class `datepicker`. You can optionally set a `placeholder`. The placeholder will get adjusted by the plugin based on the current locale. Remember to always associate a label with the input field. Always use four-digit dates in all locales for short date.
+The setup for a datepicker involves creating an `<input>` with the class `datepicker`. Remember to always associate a label correctly with the input field. We always use four-digit years in all locales.
 
-This plugin works using Locale plugin which provides data for the calendar, including calendar format for [all supported locales](./locale).
+This plugin requires the Locale plugin which provides data for the calendar, including calendar format for [all supported locales](./locale).
 
 ```html
 <div class="field">
@@ -41,14 +43,14 @@ This plugin works using Locale plugin which provides data for the calendar, incl
 
 ## Accessibility
 
-The Date Picker is a very complex control to code for accessibility.
+The Date Picker is a complex control to code for accessibility.
 
 - Always associate labels to the input field
 - Add an `aria` label to the calendar element
 - Add `aria-selected=true` to selected day
 - Add instructional information like "Use down arrow to select" to the input as an audible label
 - Each calendar item should have an audible label to announce the day of week while arrowing through days
-- For comparison, see a similar [example](http://oaa-accessibility.org/example/15/)
+- For comparison, see a similar <a href="http://oaa-accessibility.org/example/15/" target="_blank">example</a>
 
 ## Testability
 
