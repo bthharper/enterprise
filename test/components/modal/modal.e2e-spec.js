@@ -96,11 +96,11 @@ describe('Modal open example-modal tests on click', () => {
     await modalEl.click();
     await browser.driver
       .wait(protractor.ExpectedConditions.presenceOf(element(by.className('overlay'))), config.waitsFor);
+    await browser.driver.sleep(config.sleep);
   });
 
   if (utils.isChrome() && utils.isCI()) {
     it('Should not visual regress on example-index', async () => {
-      await browser.driver.sleep(config.sleep);
       const bodyEl = await element(by.className('modal-engaged'));
 
       expect(await browser.protractorImageComparison.checkElement(bodyEl, 'modal-open')).toEqual(0);
@@ -181,7 +181,7 @@ describe('Modal example-validation tests', () => {
     it('Should enable submit', async () => {
       expect(await element(by.id('submit')).isEnabled()).toBe(false);
 
-      const dropdownEl = await element(by.css('div[aria-controls="dropdown-list"]'));
+      const dropdownEl = await element(by.css('div.dropdown'));
       await browser.driver
         .wait(protractor.ExpectedConditions.presenceOf(dropdownEl), config.waitsFor);
       await dropdownEl.click();
@@ -214,7 +214,7 @@ describe('Modal example-validation-editor tests', () => {
   it('Should enable submit after add text to all fields', async () => {
     expect(await element(by.id('submit')).isEnabled()).toBe(false);
 
-    const dropdownEl = await element.all(by.css('.modal div[aria-controls="dropdown-list"]')).first();
+    const dropdownEl = await element.all(by.css('.modal div.dropdown')).first();
     await browser.driver
       .wait(protractor.ExpectedConditions.presenceOf(dropdownEl), config.waitsFor);
     await dropdownEl.click();

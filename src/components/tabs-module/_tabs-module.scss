@@ -22,11 +22,10 @@
   }
 
   [class^='btn'] {
-    @include font-size(12);
-
     background-color: $module-tabs-bg-color;
     border: 0;
     color: $module-tabs-inactive-text-color;
+    font-size: $theme-size-font-sm;
     min-width: 0;
 
     > * {
@@ -35,7 +34,7 @@
     }
 
     .icon {
-      fill: $module-tabs-inactive-text-color;
+      color: $module-tabs-inactive-text-color;
     }
 
     span {
@@ -92,15 +91,15 @@
 
   .tab {
     @include transition(background-color 500ms cubic-bezier(0.17, 0.04, 0.03, 0.94), border-color 500ms cubic-bezier(0.17, 0.04, 0.03, 0.94));
-    @include font-size(12);
 
     color: $module-tabs-inactive-text-color;
+    font-size: $theme-size-font-sm;
     min-width: 135px;
     overflow: hidden;
     text-align: center;
 
     .icon {
-      fill: $module-tabs-inactive-text-color;
+      color: $module-tabs-inactive-text-color;
     }
 
     &:not(:first-child) {
@@ -116,9 +115,8 @@
     }
 
     a {
-      @include font-size(12);
-
       float: left;
+      font-size: $theme-size-font-sm;
       font-weight: $theme-number-font-weight-bold;
       margin: 0 auto;
       overflow: hidden;
@@ -202,8 +200,7 @@
   }
 
   .add-tab-button {
-    @include font-size(24);
-
+    font-size: $theme-size-font-xl;
     font-weight: $theme-number-font-weight-base;
     height: 34px;
     padding-bottom: 5px;
@@ -211,8 +208,7 @@
     width: 41px;
 
     span {
-      @include font-size(24);
-
+      font-size: $theme-size-font-xl;
       font-weight: $theme-number-font-weight-base;
     }
 
@@ -237,21 +233,19 @@
 
   .tab-more,
   .add-tab-button {
-    @include font-size(12);
-
     border-left: 1px solid $module-tabs-x-border-color;
     color: $module-tabs-inactive-text-color;
+    font-size: $theme-size-font-sm;
     font-weight: $theme-number-font-weight-bold;
     padding: 8px 10px;
     text-align: center;
 
     .icon {
-      fill: $module-tabs-inactive-text-color;
+      color: $module-tabs-inactive-text-color;
     }
 
     .more-text {
-      @include font-size(12);
-
+      font-size: $theme-size-font-sm;
       font-weight: $theme-number-font-weight-bold;
     }
 
@@ -260,7 +254,7 @@
       color: $module-tabs-active-text-color;
 
       .icon {
-        fill: $module-tabs-active-text-color;
+        color: $module-tabs-active-text-color;
       }
     }
 
@@ -270,7 +264,7 @@
       color: $module-tabs-hover-text-color;
 
       .icon {
-        fill: $module-tabs-hover-text-color;
+        color: $module-tabs-hover-text-color;
       }
     }
   }
@@ -308,7 +302,7 @@
       }
 
       .icon {
-        fill: $module-tabs-inactive-text-color;
+        color: $module-tabs-inactive-text-color;
       }
 
       span {
@@ -319,7 +313,7 @@
         color: $module-tabs-hover-text-color;
 
         .icon {
-          fill: $module-tabs-hover-text-color;
+          color: $module-tabs-hover-text-color;
         }
       }
 
@@ -328,7 +322,7 @@
         color: $module-tabs-active-text-color;
 
         .icon {
-          fill: $module-tabs-active-text-color;
+          color: $module-tabs-active-text-color;
         }
 
         &:not(.hide-focus) {
@@ -343,7 +337,7 @@
         }
 
         .icon {
-          fill: $module-tabs-active-text-color;
+          color: $module-tabs-active-text-color;
         }
       }
     }
@@ -357,9 +351,10 @@
 
   .toolbar-searchfield-wrapper {
     color: $module-tabs-active-text-color;
+    text-align: right;
 
     .icon:not(.error) {
-      fill: $module-tabs-inactive-text-color;
+      color: $module-tabs-inactive-text-color;
     }
 
     .searchfield {
@@ -367,6 +362,7 @@
       border-bottom-color: rgba($searchfield-moduletabs-border-color, 0);
       border-top-color: rgba($searchfield-moduletabs-bg-color, 0);
       color: $module-tabs-inactive-text-color;
+      width: auto !important;
 
       &::-webkit-input-placeholder { // Chrome/Opera/Safari */
         color: $module-tabs-inactive-text-color;
@@ -436,7 +432,7 @@
       }
 
       .icon:not(.error) {
-        fill: $module-tabs-active-text-color;
+        color: $module-tabs-active-text-color;
       }
     }
 
@@ -523,12 +519,12 @@
       color: $module-tabs-disabled-text-color;
 
       .icon {
-        fill: $module-tabs-disabled-text-color;
+        color: $module-tabs-disabled-text-color;
       }
     }
 
     .icon {
-      fill: $module-tabs-disabled-text-color;
+      color: $module-tabs-disabled-text-color;
 
       &.app-header {
         span:not(.audible) {
@@ -569,7 +565,7 @@
       color: $module-tabs-disabled-text-color;
 
       .icon {
-        fill: $module-tabs-disabled-text-color;
+        color: $module-tabs-disabled-text-color;
       }
 
       &.is-selected {
@@ -577,7 +573,7 @@
         color: $module-tabs-disabled-text-color;
 
         .icon {
-          fill: $module-tabs-disabled-text-color;
+          color: $module-tabs-disabled-text-color;
         }
       }
 
@@ -588,7 +584,7 @@
         color: $module-tabs-disabled-text-color;
 
         .icon {
-          fill: $module-tabs-disabled-text-color;
+          color: $module-tabs-disabled-text-color;
         }
       }
     }
@@ -608,14 +604,14 @@
         }
 
         .icon {
-          fill: $module-tabs-disabled-text-color;
+          color: $module-tabs-disabled-text-color;
         }
 
         &:hover {
           color: $module-tabs-disabled-text-color;
 
           .icon {
-            fill: $module-tabs-disabled-text-color;
+            color: $module-tabs-disabled-text-color;
           }
         }
 
@@ -624,7 +620,7 @@
           color: $module-tabs-disabled-text-color;
 
           .icon {
-            fill: $module-tabs-disabled-text-color;
+            color: $module-tabs-disabled-text-color;
           }
 
           &:not(.hide-focus) {
@@ -636,7 +632,7 @@
 
         &.is-open {
           .icon {
-            fill: $module-tabs-disabled-text-color;
+            color: $module-tabs-disabled-text-color;
           }
         }
       }
@@ -644,7 +640,7 @@
 
     .toolbar-searchfield-wrapper {
       .icon:not(.error) {
-        fill: $module-tabs-disabled-text-color;
+        color: $module-tabs-disabled-text-color;
       }
 
       .searchfield {
@@ -667,7 +663,7 @@
         }
 
         .icon:not(.error) {
-          fill: $module-tabs-disabled-text-color;
+          color: $module-tabs-disabled-text-color;
         }
       }
     }
@@ -694,6 +690,14 @@ html[dir='rtl'] {
       .add-tab-button {
         left: 0;
         right: auto;
+      }
+    }
+
+    .toolbar-searchfield-wrapper {
+      text-align: left;
+
+      .searchfield {
+        padding-left: 30px;
       }
     }
 
@@ -774,6 +778,18 @@ html[dir='rtl'] {
         margin-left: 0;
         visibility: hidden;
         width: 0;
+      }
+    }
+  }
+
+  html[dir='rtl'] {
+    .tab-container {
+      &.module-tabs {
+        .toolbar-searchfield-wrapper {
+          .searchfield {
+            padding-left: 60px;
+          }
+        }
       }
     }
   }

@@ -1,4 +1,5 @@
 /* eslint-disable no-nested-ternary, no-useless-escape */
+import { Environment as env } from '../../utils/environment';
 
 // If `SohoConfig` exists with a `culturesPath` property, use that path for retrieving
 // culture files. This allows manually setting the directory for the culture files.
@@ -21,18 +22,68 @@ if (typeof window.SohoConfig === 'object' && typeof window.SohoConfig.culturesPa
 const Locale = {  // eslint-disable-line
 
   currentLocale: { name: '', data: {} }, // default
+  currentLanguage: { name: '' }, // default
   cultures: {},
+  languages: {},
   culturesPath: existingCulturePath,
+  defaultLocales: [
+    { lang: 'af', default: 'af-ZA' },
+    { lang: 'ar', default: 'ar-EG' },
+    { lang: 'bg', default: 'bg-BG' },
+    { lang: 'cs', default: 'cs-CZ' },
+    { lang: 'da', default: 'da-DK' },
+    { lang: 'de', default: 'de-DE' },
+    { lang: 'el', default: 'el-GR' },
+    { lang: 'en', default: 'en-US' },
+    { lang: 'es', default: 'es-ES' },
+    { lang: 'et', default: 'et-ET' },
+    { lang: 'fi', default: 'fi-FI' },
+    { lang: 'fr', default: 'fr-FR' },
+    { lang: 'he', default: 'he-IL' },
+    { lang: 'hi', default: 'hi-IN' },
+    { lang: 'hr', default: 'hr-HR' },
+    { lang: 'hu', default: 'hu-HU' },
+    { lang: 'id', default: 'id-ID' },
+    { lang: 'it', default: 'it-IT' },
+    { lang: 'iw', default: 'he-IL' },
+    { lang: 'ja', default: 'ja-JP' },
+    { lang: 'ko', default: 'ko-KR' },
+    { lang: 'lt', default: 'lt-LT' },
+    { lang: 'lv', default: 'lv-LV' },
+    { lang: 'ms', default: 'ms-bn' },
+    { lang: 'nb', default: 'nb-NO' },
+    { lang: 'nl', default: 'nl-NL' },
+    { lang: 'no', default: 'no-NO' },
+    { lang: 'pl', default: 'pl-PL' },
+    { lang: 'pt', default: 'pt-PT' },
+    { lang: 'ro', default: 'ro-RO' },
+    { lang: 'ru', default: 'ru-RU' },
+    { lang: 'sk', default: 'sk-SK' },
+    { lang: 'sl', default: 'sl-SI' },
+    { lang: 'sv', default: 'sv-SE' },
+    { lang: 'th', default: 'th-TH' },
+    { lang: 'tr', default: 'tr-TR' },
+    { lang: 'uk', default: 'uk-UA' },
+    { lang: 'vi', default: 'vi-VN' },
+    { lang: 'zh', default: 'zh-CN' }
+  ],
+  supportedLocales: ['af-ZA', 'ar-EG', 'ar-SA', 'bg-BG', 'cs-CZ', 'da-DK', 'de-DE', 'el-GR',
+    'en-AU', 'en-GB', 'en-IN', 'en-NZ', 'en-US', 'en-ZA', 'es-AR', 'es-ES', 'es-MX',
+    'es-US', 'et-EE', 'fi-FI', 'fr-CA', 'fr-FR', 'he-IL', 'hi-IN', 'hr-HR',
+    'hu-HU', 'id-ID', 'it-IT', 'ja-JP', 'ko-KR', 'lt-LT', 'lv-LV', 'ms-bn', 'ms-my', 'nb-NO',
+    'nl-NL', 'no-NO', 'pl-PL', 'pt-BR', 'pt-PT', 'ro-RO', 'ru-RU', 'sk-SK', 'sl-SI', 'sv-SE', 'th-TH', 'tr-TR',
+    'uk-UA', 'vi-VN', 'zh-CN', 'zh-Hans', 'zh-Hant', 'zh-TW'],
+  defaultLocale: 'en-US',
 
   /**
    * Sets the current language in the Html Header
    * @private
-   * @returns {void}
+   * @param  {string} lang The two digit language code.
    */
-  updateLang() {
+  updateLanguage(lang) {
     const html = $('html');
 
-    html.attr('lang', this.currentLocale.name);
+    html.attr('lang', lang);
     if (this.isRTL()) {
       html.attr('dir', 'rtl');
     } else {
@@ -108,78 +159,76 @@ const Locale = {  // eslint-disable-line
    * @param {string} locale The locale to check.
    * @returns {string} The actual locale to use.
    */
-  defaultLocale(locale) {
-    const lang = locale.split('-')[0];
-    const defaults = [
-      { lang: 'af', default: 'af-ZA' },
-      { lang: 'ar', default: 'af-EG' },
-      { lang: 'bg', default: 'bg-BG' },
-      { lang: 'cs', default: 'cs-CZ' },
-      { lang: 'da', default: 'da-DK' },
-      { lang: 'de', default: 'de-DE' },
-      { lang: 'el', default: 'el-GR' },
-      { lang: 'en', default: 'en-US' },
-      { lang: 'es', default: 'es-ES' },
-      { lang: 'et', default: 'et-ET' },
-      { lang: 'fi', default: 'fi-FI' },
-      { lang: 'fr', default: 'fr-FR' },
-      { lang: 'he', default: 'he-IL' },
-      { lang: 'hi', default: 'hi-IN' },
-      { lang: 'hr', default: 'hr-HR' },
-      { lang: 'hu', default: 'hu-HU' },
-      { lang: 'id', default: 'id-ID' },
-      { lang: 'it', default: 'it-IT' },
-      { lang: 'iw', default: 'he-IL' },
-      { lang: 'ja', default: 'ja-JP' },
-      { lang: 'ko', default: 'ko-KR' },
-      { lang: 'lt', default: 'lt-LT' },
-      { lang: 'lv', default: 'lv-LV' },
-      { lang: 'ms', default: 'ms-bn' },
-      { lang: 'nb', default: 'nb-NO' },
-      { lang: 'nl', default: 'nl-NL' },
-      { lang: 'no', default: 'no-NO' },
-      { lang: 'pl', default: 'pl-PL' },
-      { lang: 'pt', default: 'pt-PT' },
-      { lang: 'ro', default: 'ro-RO' },
-      { lang: 'ru', default: 'ru-RU' },
-      { lang: 'sk', default: 'sk-SK' },
-      { lang: 'sl', default: 'sl-SI' },
-      { lang: 'sv', default: 'sv-SE' },
-      { lang: 'th', default: 'th-TH' },
-      { lang: 'tr', default: 'tr-TR' },
-      { lang: 'uk', default: 'uk-UA' },
-      { lang: 'vi', default: 'vi-VN' },
-      { lang: 'zh', default: 'zh-CN' }
-    ];
-    const allLocales = ['af-ZA', 'ar-EG', 'ar-SA', 'bg-BG', 'cs-CZ', 'da-DK', 'de-DE', 'el-GR',
-      'en-AU', 'en-GB', 'en-IN', 'en-NZ', 'en-US', 'en-ZA', 'es-AR', 'es-ES', 'es-MX',
-      'es-US', 'et-EE', 'fi-FI', 'fr-CA', 'fr-FR', 'he-IL', 'hi-IN', 'hr-HR',
-      'hu-HU', 'id-ID', 'it-IT', 'ja-JP', 'ko-KR', 'lt-LT', 'lv-LV', 'ms-bn', 'ms-my', 'nb-NO',
-      'nl-NL', 'no-NO', 'pl-PL', 'pt-BR', 'pt-PT', 'ro-RO', 'ru-RU', 'sk-SK', 'sl-SI', 'sv-SE', 'th-TH', 'tr-TR',
-      'uk-UA', 'vi-VN', 'zh-CN', 'zh-Hans', 'zh-Hant', 'zh-TW'];
-    const defaultLocale = 'en-US';
+  correctLocale(locale) {
+    // Map incorrect java locale to correct locale
+    if (locale === 'in-ID') {
+      locale = 'id-ID';
+    }
+    if (locale.substr(0, 2) === 'iw') {
+      locale = 'he-IL';
+    }
 
-    if (allLocales.indexOf(locale) === -1) {
-      locale = defaults.filter(a => a.lang === lang);
+    const lang = locale.split('-')[0];
+    if (this.supportedLocales.indexOf(locale) === -1) {
+      locale = this.defaultLocales.filter(a => a.lang === lang);
 
       if (locale && locale[0]) {
         return locale[0].default;
       }
 
-      locale = defaultLocale;
+      locale = this.defaultLocale;
     }
 
     return locale;
   },
 
   /**
+   * Check if the language is supported, if not return 'en'.
+   * @private
+   * @param {string} lang The locale to check.
+   * @returns {string} The actual lang to use.
+   */
+  correctLanguage(lang) {
+    let correctLanguage = this.defaultLocales.filter(a => a.lang === lang);
+
+    if (correctLanguage && correctLanguage[0]) {
+      return lang;
+    }
+
+    // Map incorrect java locale to correct locale
+    if (lang === 'in') {
+      correctLanguage = 'id';
+    }
+    if (lang === 'iw') {
+      correctLanguage = 'he';
+    }
+
+    correctLanguage = this.defaultLocale.substr(0, 2);
+    return correctLanguage;
+  },
+
+  /**
    * Internally stores a new culture file for future use.
-   * @param {string} locale the 4-character Locale ID
-   * @param {object} data translation data and locale-specific functions, such as calendars.
+   * @private
+   * @param {string} locale The 4-character Locale ID
+   * @param {object} data Translation data and locale-specific functions, such as calendars.
+   * @param {object} langData Translation data if deperated.
    * @returns {void}
    */
-  addCulture(locale, data) {
+  addCulture(locale, data, langData) {
+    const lang = locale.substr(0, 2);
+
     this.cultures[locale] = data;
+    this.cultures[locale].name = locale;
+    this.languages[lang] = {
+      name: lang,
+      direction: data.direction || (langData ? langData.direction : ''),
+      nativeName: data.nativeName || (langData ? langData.nativeName : ''),
+      messages: data.messages || (langData ? langData.messages : {})
+    };
+    if (!langData) {
+      delete this.cultures[locale].messages;
+    }
   },
 
   /**
@@ -187,19 +236,20 @@ const Locale = {  // eslint-disable-line
    * @private
    * @param {string} locale The locale name to append.
    * @param {boolean} isCurrent If we should set this as the current locale
+   * @param {boolean} useLocale If we should resolve the promise base on locale
    * @returns {void}
    */
-  appendLocaleScript(locale, isCurrent) {
+  appendLocaleScript(locale, isCurrent, useLocale) {
     const script = document.createElement('script');
     script.src = `${this.getCulturesPath() + locale}.js`;
 
     script.onload = () => {
       if (isCurrent) {
         this.setCurrentLocale(locale, this.cultures[locale]);
+        this.dff.resolve(locale);
       }
-
-      if (isCurrent) {
-        this.dff.resolve(this.currentLocale.name);
+      if (useLocale) {
+        this.dff[locale].resolve(locale);
       }
     };
 
@@ -222,17 +272,7 @@ const Locale = {  // eslint-disable-line
   set(locale) {
     const self = this;
     this.dff = $.Deferred();
-
-    // Map incorrect java locale to correct locale
-    if (locale === 'in-ID') {
-      locale = 'id-ID';
-    }
-
-    if (locale.substr(0, 2) === 'iw') {
-      locale = 'he-IL';
-    }
-
-    locale = this.defaultLocale(locale);
+    locale = this.correctLocale(locale);
 
     if (locale === '') {
       self.dff.resolve();
@@ -263,6 +303,71 @@ const Locale = {  // eslint-disable-line
   },
 
   /**
+   * Loads the locale without setting it.
+   * @param {string} locale The locale to fetch and set.
+   * @returns {jquery.deferred} which is resolved once the locale culture is retrieved and set
+   */
+  getLocale(locale) {
+    const self = this;
+    this.dff[locale] = $.Deferred();
+    locale = this.correctLocale(locale);
+
+    if (locale === '') {
+      const dff = $.Deferred();
+      dff.resolve();
+      return dff.promise();
+    }
+
+    if (locale && locale !== 'en-US' && !this.cultures['en-US']) {
+      this.appendLocaleScript('en-US', false, true);
+    }
+
+    if (locale && !this.cultures[locale] && this.currentLocale.name !== locale) {
+      this.appendLocaleScript(locale, false, true);
+    }
+
+    if (locale && self.currentLocale.data && self.currentLocale.dataName === locale) {
+      this.dff[locale].resolve(locale);
+    }
+    if (self.cultures[locale] && this.cultureInHead()) {
+      this.dff[locale].resolve(locale);
+    }
+
+    return this.dff[locale].promise();
+  },
+
+  /**
+   * Sets the current language, this can be independent and different from the current locale.
+   * @param {string} lang The two digit language code to use.
+   * @returns {jquery.deferred} which is resolved once the locale culture is retrieved and set
+   */
+  setLanguage(lang) {
+    // If not call set and load it and then set back the locale after.
+    // Make a new object for currentLanguage independent of currentLocale
+    // Change translate to use the right one
+    const currentLocale = this.currentLocale.name;
+
+    // Map incorrect java locale to correct locale
+    lang = this.correctLanguage(lang);
+
+    // Ensure the language / culture is loaded.
+    if (!this.languages[lang]) {
+      this.set(lang).done(() => {
+        this.set(currentLocale);
+        this.setLanguage(lang);
+      });
+    }
+
+    if (this.languages[lang]) {
+      this.currentLanguage = this.languages[lang];
+      this.updateLanguage(lang);
+    } else {
+      this.currentLanguage.name = lang;
+    }
+    return this.dff;
+  },
+
+  /**
    * Chooses a stored locale dataset and sets it as "current"
    * @private
    * @param {string} name the 4-character Locale ID
@@ -270,29 +375,37 @@ const Locale = {  // eslint-disable-line
    * @returns {void}
    */
   setCurrentLocale(name, data) {
+    const lang = name.substr(0, 2);
     this.currentLocale.name = name;
 
     if (data) {
       this.currentLocale.data = data;
       this.currentLocale.dataName = name;
-      this.updateLang();
+      this.currentLanguage = this.languages[lang];
+      this.updateLanguage(lang);
     }
   },
 
   /**
   * Formats a date object and returns it parsed back using the current locale or settings.
+  * The symbols for date formatting use the CLDR at https://bit.ly/2Jg0a6m
   * @param {date} value The date to show in the current locale.
-  * @param {object} attribs additional formatting settings.
+  * @param {object} options Additional date formatting settings.
   * @returns {string} the formatted date.
   */
-  formatDate(value, attribs) {
-    // We will use http://www.unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
-    if (!attribs) {
-      attribs = { date: 'short' }; // can be date, time, datetime or pattern
+  formatDate(value, options) {
+    if (!options) {
+      options = { date: 'short' }; // can be date, time, datetime or pattern
     }
+    const localeData = this.useLocale(options);
 
     if (!value) {
       return undefined;
+    }
+
+    if (value === '0000' || value === '000000' || value === '00000000') {
+      // Means no date in some applications
+      return '';
     }
 
     // Convert if a timezone string.
@@ -308,8 +421,8 @@ const Locale = {  // eslint-disable-line
 
     // Convert if a string..
     if (!(value instanceof Date) && typeof value === 'string') {
-      let tDate2 = Locale.parseDate(value, attribs);
-      if (isNaN(tDate2) && attribs.date === 'datetime' &&
+      let tDate2 = Locale.parseDate(value, options);
+      if (isNaN(tDate2) && options.date === 'datetime' &&
         value.substr(4, 1) === '-' &&
         value.substr(7, 1) === '-') {
         tDate2 = new Date(
@@ -333,18 +446,20 @@ const Locale = {  // eslint-disable-line
       return undefined;
     }
 
-    // TODO: Can we handle this if (this.dff.state()==='pending')
-    const data = this.currentLocale.data;
     let pattern;
     let ret = '';
-    const cal = (data.calendars ? data.calendars[0] : null);
+    const cal = (localeData.calendars ? localeData.calendars[0] : null);
 
-    if (attribs.pattern) {
-      pattern = attribs.pattern;
+    if (options.pattern) {
+      pattern = options.pattern;
     }
 
-    if (attribs.date) {
-      pattern = cal.dateFormat[attribs.date];
+    if (options.date) {
+      pattern = cal.dateFormat[options.date];
+    }
+
+    if (!pattern) {
+      pattern = cal.dateFormat.short;
     }
 
     let year = (value instanceof Array ? value[0] : value.getFullYear());
@@ -357,12 +472,12 @@ const Locale = {  // eslint-disable-line
     const millis = (value instanceof Array ? value[6] : value.getMilliseconds());
 
     if (cal && cal.conversions) {
-      if (attribs.fromGregorian) {
+      if (options.fromGregorian) {
         const islamicParts = cal.conversions.fromGregorian(value);
         day = islamicParts[2];
         month = islamicParts[1];
         year = islamicParts[0];
-      } else if (attribs.toGregorian) {
+      } else if (options.toGregorian) {
         const gregorianDate = cal.conversions.toGregorian(year, month, day);
         day = gregorianDate.getDate();
         month = gregorianDate.getMonth();
@@ -424,7 +539,62 @@ const Locale = {  // eslint-disable-line
     ret = ret.replace('t1áng', 'tháng');
     ret = ret.replace('nnn', 'den');
 
+    // Timezone
+    if (ret.indexOf('zz') > -1) {
+      const timezoneDate = new Date();
+      const shortName = this.getTimeZone(timezoneDate, 'short');
+      const longName = this.getTimeZone(timezoneDate, 'long');
+
+      ret = ret.replace('zzzz', longName);
+      ret = ret.replace('zz', shortName);
+    }
+
     return ret.trim();
+  },
+
+  /**
+   * Get the timezone part of a date
+   * @param  {date} date The date object to use.
+   * @param  {string} timeZoneName Can be short or long.
+   * @returns {string} The time zone as a string.
+   */
+  getTimeZone(date, timeZoneName) {
+    const currentLocale = Locale.currentLocale.name || 'en-US';
+    const time = date.toLocaleTimeString(currentLocale);
+    let name = '';
+
+    if (env.browser.name === 'ie' && env.browser.version === '11') {
+      return (date).toTimeString().match(new RegExp('[A-Z](?!.*[\(])', 'g')).join('');
+    }
+
+    if (timeZoneName === 'long') {
+      name = date.toLocaleTimeString(
+        currentLocale,
+        { timeZoneName: 'long' }
+      );
+      return name.replace(`${time} `, '');
+    }
+
+    name = date.toLocaleTimeString(
+      currentLocale,
+      { timeZoneName: 'short' }
+    );
+    return name.replace(`${time} `, '');
+  },
+
+  /**
+  * Takes a date object in the current locale and adjusts it for the given timezone.
+  * @param {date} date The utc date to show in the desired timezone.
+  * @param {string} timeZone The timezone name to show.
+  * @param {string} timeZoneName How to display the time zone name. Defaults to none. But can be short or long.
+  * @returns {date} the utc date
+  */
+  dateToTimeZone(date, timeZone, timeZoneName) {
+    if (env.browser.name === 'ie' && env.browser.version === '11') {
+      return `${(date).toLocaleString(Locale.currentLocale.name)} ${(date).toTimeString().match(new RegExp('[A-Z](?!.*[\(])', 'g')).join('')}`;
+    }
+
+    return (date).toLocaleString(Locale.currentLocale.name, { timeZone, timeZoneName });
   },
 
   /**
@@ -441,6 +611,49 @@ const Locale = {  // eslint-disable-line
       date.getMinutes(),
       date.getSeconds()
     ));
+  },
+
+  /**
+  * Formats a number into the current locale using toLocaleString
+  * See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_locales
+  * @param {number} number The number to convert
+  * @param {string} locale The number to convert
+  * @param {object} options The number to convert
+  * @returns {string} The converted number.
+  */
+  toLocaleString(number, locale, options) {
+    if (typeof number !== 'number') {
+      return '';
+    }
+    return number.toLocaleString(locale || Locale.currentLocale.name, options || undefined);
+  },
+
+  /**
+   * Convert a number in arabic/chinese or hindi numerals to an "english" number.
+   * @param  {[type]} string The string number in arabic/chinese or hindi
+   * @returns {number} The english number.
+   */
+  convertNumberToEnglish(string) {
+    const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    const devanagari = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९']; // Hindi
+    const chineseFinancialTraditional = ['零', '壹', '貳', '叄', '肆', '伍', '陸', '柒', '捌', '玖'];
+    const chineseFinancialSimplified = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+    const chinese = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+
+    for (let i = 0; i <= 9; i++) {
+      string = string.replace(arabic[i], i);
+      string = string.replace('٬', '');
+      string = string.replace(',', '');
+      string = string.replace(devanagari[i], i);
+      string = string.replace(chineseFinancialTraditional[i], i);
+      string = string.replace(chineseFinancialSimplified[i], i);
+      string = string.replace(chinese[i], i);
+
+      if (i === 0) { // Second option for zero in chinese
+        string = string.replace('零', i);
+      }
+    }
+    return parseFloat(string);
   },
 
   /**
@@ -462,29 +675,39 @@ const Locale = {  // eslint-disable-line
   /**
    * Takes a formatted date string and parses back it into a date object
    * @param {string} dateString  The string to parse in the current format
-   * @param {string} dateFormat  The source format fx yyyy-MM-dd
-   * @param {boolean} isStrict  If true missing date parts will be considered
-   *  invalid. If false the current month/day.
+   * @param {string|object} options  The source format for example 'yyyy-MM-dd' or { dateFormat: 'yyyy-MM-dd', locale: 'nl-NL'}
+   * @param {boolean} isStrict  If true missing date parts will be considered invalid. If false the current month/day.
    * @returns {date|array|undefined} A correct date object, if islamic calendar then an array is used or undefined if invalid.
    */
-  parseDate(dateString, dateFormat, isStrict) {
-    const thisLocaleCalendar = this.calendar();
-    const orgDatestring = dateString;
-
+  parseDate(dateString, options, isStrict) {
     if (!dateString) {
       return undefined;
     }
 
+    let dateFormat = options;
+    let locale = this.currentLocale.name;
+    const thisLocaleCalendar = this.calendar();
+    if (typeof options === 'object') {
+      locale = options.locale || locale;
+      dateFormat = options.dateFormat || this.calendar(locale).dateFormat[dateFormat.date];
+    }
+
+    if (typeof options === 'object' && options.pattern) {
+      dateFormat = options.dateFormat || options.pattern;
+    }
+
     if (!dateFormat) {
-      dateFormat = this.calendar().dateFormat.short;
+      dateFormat = this.calendar(locale).dateFormat.short;
+    }
+
+    const orgDatestring = dateString;
+    if (dateString === '0000' || dateString === '000000' || dateString === '00000000') {
+      // Means no date in some applications
+      return undefined;
     }
 
     if (dateFormat.pattern) {
       dateFormat = dateFormat.pattern;
-    }
-
-    if (typeof dateFormat === 'object' && dateFormat.date) {
-      dateFormat = this.calendar().dateFormat[dateFormat.date];
     }
 
     let formatParts;
@@ -496,7 +719,14 @@ const Locale = {  // eslint-disable-line
     let l;
 
     if (isDateTime) {
-      // replace [space & colon & dot] with "/"
+      // Remove Timezone
+      const shortTimeZone = Locale.getTimeZone(new Date(), 'short');
+      const longTimeZone = Locale.getTimeZone(new Date(), 'long');
+      dateString = dateString.replace(` ${shortTimeZone}`, '');
+      dateString = dateString.replace(` ${longTimeZone}`, '');
+      dateFormat = dateFormat.replace(' zzzz', '').replace(' zz', '');
+
+      // Replace [space & colon & dot] with "/"
       dateFormat = dateFormat.replace(/[T\s:.-]/g, '/').replace(/z/i, '');
       dateString = dateString.replace(/[T\s:.-]/g, '/').replace(/z/i, '');
     }
@@ -632,7 +862,7 @@ const Locale = {  // eslint-disable-line
           dateObj.month = value - 1;
           break;
         case 'MMM':
-          abrMonth = this.calendar().months.abbreviated;
+          abrMonth = this.calendar(locale).months.abbreviated;
 
           for (let len = 0; len < abrMonth.length; len++) {
             if (orgDatestring.indexOf(abrMonth[len]) > -1) {
@@ -642,7 +872,7 @@ const Locale = {  // eslint-disable-line
 
           break;
         case 'MMMM':
-          textMonths = this.calendar().months.wide;
+          textMonths = this.calendar(locale).months.wide;
 
           for (let k = 0; k < textMonths.length; k++) {
             if (orgDatestring.indexOf(textMonths[k]) > -1) {
@@ -834,10 +1064,27 @@ const Locale = {  // eslint-disable-line
     return (this.isValidDate(dateObj.return) ? dateObj.return : undefined);
   },
 
+  /**
+   * Convert the two digit year year to the correct four digit year.
+   * @private
+   * @param  {number} twoDigitYear The two digit year.
+   * @returns {number} Converted 3 digit year.
+   */
   twoToFourDigitYear(twoDigitYear) {
     return parseInt((twoDigitYear > 39 ? '19' : '20') + twoDigitYear, 10);
   },
 
+  /**
+   * Format out the date into parts.
+   * @private
+   * @param  {array} formatParts An array of the format bits.
+   * @param  {array} dateStringParts An array of the date parts.
+   * @param  {string} filter1 The first option to filter.
+   * @param  {string} filter2 The second option to filter.
+   * @param  {string} filter3 The third option to filter.
+   * @param  {string} filter4 The fourth option to filter.
+   * @returns {string} The filtered out date part.
+   */
   getDatePart(formatParts, dateStringParts, filter1, filter2, filter3, filter4) {
     let ret = 0;
 
@@ -854,18 +1101,52 @@ const Locale = {  // eslint-disable-line
   },
 
   /**
+   * Use the current locale data or the one passed in.
+   * @private
+   * @param  {object} options The options to parse.
+   * @returns {object} The locale data.
+   */
+  useLocale(options) {
+    let localeData = this.currentLocale.data;
+    if (options && options.locale && this.cultures[options.locale]) {
+      localeData = this.cultures[options.locale];
+    }
+    if (!localeData.numbers) {
+      localeData.numbers = this.numbers();
+    }
+    return localeData;
+  },
+
+  /**
+   * Use the current language data or the one passed in.
+   * @private
+   * @param  {object} options The options to parse.
+   * @returns {object} The language data.
+   */
+  useLanguage(options) {
+    let languageData = this.currentLanguage;
+    if (options && options.locale) {
+      const lang = options.locale.split('-')[0];
+      return this.languages[lang];
+    }
+    if (options && options.language && this.languages[options.language]) {
+      languageData = this.languages[options.language];
+    }
+    return languageData;
+  },
+
+  /**
   * Formats a decimal with thousands and padding in the current locale or settings.
   * @param {number} number The source number.
   * @param {object} options additional options (see Number Format Patterns)
   * @returns {string} the formatted number.
   */
   formatNumber(number, options) {
-    // Lookup , decimals, decimalSep, thousandsSep
+    const localeData = this.useLocale(options);
     let formattedNum;
     let curFormat;
     let percentFormat;
-    const decimal = options && options.decimal ? options.decimal : this.numbers().decimal;
-    const group = options && options.group !== undefined ? options.group : this.numbers().group;
+    const decimal = options && options.decimal ? options.decimal : localeData.numbers.decimal;
     let minimumFractionDigits = options && options.minimumFractionDigits !== undefined ? options.minimumFractionDigits : (options && options.style && options.style === 'currency' ? 2 : (options && options.style && options.style === 'percent') ? 0 : 2);
     let maximumFractionDigits = options && options.maximumFractionDigits !== undefined ? options.maximumFractionDigits : (options && options.style && (options.style === 'currency' || options.style === 'percent') ? 2 : (options && options.minimumFractionDigits ? options.minimumFractionDigits : 3));
 
@@ -879,10 +1160,9 @@ const Locale = {  // eslint-disable-line
     }
 
     if (options && options.style === 'currency') {
-      const sign = options && options.currencySign ? options.currencySign :
-        this.currentLocale.data.currencySign;
+      const sign = options && options.currencySign ? options.currencySign : localeData.currencySign;
       let format = options && options.currencyFormat ? options.currencyFormat :
-        this.currentLocale.data.currencyFormat;
+        localeData.currencyFormat;
 
       if (!format) {
         format = '¤#,##0.00'; // default to en-us
@@ -891,9 +1171,9 @@ const Locale = {  // eslint-disable-line
     }
 
     if (options && options.style === 'percent') {
-      const percentSign = !this.currentLocale.data.numbers ? '%' : this.currentLocale.data.numbers.percentSign;
+      const percentSign = !localeData.numbers ? '%' : localeData.numbers.percentSign;
 
-      percentFormat = !this.currentLocale.data.numbers ? '#,##0 %' : this.currentLocale.data.numbers.percentFormat;
+      percentFormat = !localeData.numbers ? '### %' : localeData.numbers.percentFormat;
       percentFormat = percentFormat.replace('¤', percentSign);
     }
 
@@ -910,40 +1190,47 @@ const Locale = {  // eslint-disable-line
     }
 
     const parts = this.truncateDecimals(number, minimumFractionDigits, maximumFractionDigits, options && options.round).split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, group);
+    let groupSizes = [3, 3]; // In case there is no data
+    if (localeData && localeData.numbers && localeData.numbers.groupSizes) {
+      groupSizes = localeData.numbers.groupSizes;
+    }
+    if (options && options.groupSizes) {
+      groupSizes = options.groupSizes;
+    }
+
+    const sep = options && options.group !== undefined ? options.group : localeData.numbers.group;
+    const expandedNum = this.expandNumber(parts[0], groupSizes, sep);
+    parts[0] = expandedNum;
     formattedNum = parts.join(decimal);
 
     // Position the negative at the front - There is no CLDR info for this.
-    const minusSign = (this.currentLocale.data && this.currentLocale.data.numbers &&
-      this.currentLocale.data.numbers.minusSign) ? this.currentLocale.data.numbers.minusSign : '-';
+    const minusSign = (localeData && localeData.numbers &&
+      localeData.numbers.minusSign) ? localeData.numbers.minusSign : '-';
     const isNegative = (formattedNum.indexOf(minusSign) > -1);
     formattedNum = formattedNum.replace(minusSign, '');
 
-    if (minimumFractionDigits === 0) { // Not default
-      formattedNum = formattedNum.replace(/(\.[0-9]*?)0+$/, '$1'); // remove trailing zeros
-      formattedNum = formattedNum.replace(/\.$/, ''); // remove trailing dot
-    }
+    const escape = str => str.replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1');
+    let expr = '';
 
-    if (minimumFractionDigits === 0 && decimal !== '.') { // Not default
-      formattedNum = formattedNum.replace(/(\,[0-9]*?)0+$/, '$1'); // remove trailing zeros
-      formattedNum = formattedNum.replace(/\,$/, ''); // remove trailing dot
+    if (minimumFractionDigits === 0) { // Not default
+      expr = new RegExp(`(${escape(decimal)}[0-9]*?)0+$`);
+      formattedNum = formattedNum.replace(expr, '$1'); // remove trailing zeros
     }
 
     if (minimumFractionDigits > 0) {
-      const expr = new RegExp(`(\\..{${minimumFractionDigits}}[0-9]*?)0+$`);
+      expr = new RegExp(`(${escape(decimal)}.{${minimumFractionDigits}}[0-9]*?)0+$`);
       formattedNum = formattedNum.replace(expr, '$1'); // remove trailing zeros
-      formattedNum = formattedNum.replace(/\.$/, ''); // remove trailing dot
     }
 
-    // Confirm Logic After All Locales are added.
+    expr = new RegExp(`${escape(decimal)}$`);
+    formattedNum = formattedNum.replace(expr, ''); // remove trailing decimal
+
     if (options && options.style === 'currency') {
-      formattedNum = curFormat.replace('#,##0.00', formattedNum);
-      formattedNum = formattedNum.replace('#,##0.00', formattedNum);
+      formattedNum = curFormat.replace('###', formattedNum);
     }
 
     if (options && options.style === 'percent') {
-      formattedNum = percentFormat.replace('#,##0', formattedNum);
-      formattedNum = formattedNum.replace('#.##0', formattedNum);
+      formattedNum = percentFormat.replace('###', formattedNum);
     }
 
     if (isNegative) {
@@ -952,6 +1239,12 @@ const Locale = {  // eslint-disable-line
     return formattedNum;
   },
 
+  /**
+   * Return the number of decimal places in a number
+   * @private
+   * @param  {number} number The starting number.
+   * @returns {number} The number of decimal places.
+   */
   decimalPlaces(number) {
     if (Math.floor(number) === number) {
       return 0;
@@ -963,6 +1256,52 @@ const Locale = {  // eslint-disable-line
     return number.toString().split('.')[1].length || 0;
   },
 
+  /**
+   * Expand the number to the groupsize.
+   * @private
+   * @param  {string} numberString The number to expand
+   * @param  {array} groupSizes The groupSizes option.
+   * @param  {string} sep The thousands seperator option.
+   * @returns {string} The expanded number.
+   */
+  expandNumber(numberString, groupSizes, sep) {
+    let len = numberString.length;
+    let isNegative = false;
+
+    if (numberString.substr(0, 1) === '-') {
+      numberString = numberString.substr(1);
+      len = numberString.length;
+      isNegative = true;
+    }
+
+    if (len <= 3) {
+      return (isNegative ? '-' : '') + numberString;
+    }
+
+    if (groupSizes[0] === 0) {
+      return (isNegative ? '-' : '') + numberString;
+    }
+
+    const firstGroup = numberString.substr(numberString.length - groupSizes[0]);
+    const nthGroup = numberString.substr(0, numberString.length - groupSizes[0]);
+    if (groupSizes[1] === 0) {
+      return (isNegative ? '-' : '') + nthGroup + (nthGroup === '' ? '' : sep) + firstGroup;
+    }
+    const reversed = nthGroup.split('').reverse().join('');
+    const regex = new RegExp(`.{1,${groupSizes[1]}}`, 'g');
+    const reversedSplit = reversed.match(regex).join(sep);
+    return (isNegative ? '-' : '') + reversedSplit.split('').reverse().join('') + sep + firstGroup;
+  },
+
+  /**
+   * Truncate a number to a specific min and max digits.
+   * @private
+   * @param  {number} number The starting number.
+   * @param  {number} minDigits Minimum number of digits to show on the decimal portion.
+   * @param  {number} maxDigits Maximum number of digits to show on the decimal portion.
+   * @param  {boolean} round If true round, if false truncate.
+   * @returns {number} The updated number.
+   */
   truncateDecimals(number, minDigits, maxDigits, round) {
     let multiplier = Math.pow(10, maxDigits);
     let adjustedNum = number * multiplier;
@@ -999,10 +1338,12 @@ const Locale = {  // eslint-disable-line
   /**
    * Takes a formatted number string and returns back real number object.
    * @param {string} input  The source number (as a string).
+   * @param {object} options  Any special options to pass in such as the locale.
    * @returns {number} the number as an actual Number type.
    */
-  parseNumber(input) {
-    const numSettings = this.currentLocale.data.numbers;
+  parseNumber(input, options) {
+    const localeData = this.useLocale(options);
+    const numSettings = localeData.numbers;
     let numString;
 
     numString = input;
@@ -1018,12 +1359,13 @@ const Locale = {  // eslint-disable-line
     const group = numSettings ? numSettings.group : ',';
     const decimal = numSettings ? numSettings.decimal : '.';
     const percentSign = numSettings ? numSettings.percentSign : '%';
-    const currencySign = this.currentLocale.data.currencySign || '$';
+    const currencySign = localeData.currencySign || '$';
 
     numString = numString.replace(new RegExp(`\\${group}`, 'g'), '');
     numString = numString.replace(decimal, '.');
     numString = numString.replace(percentSign, '');
     numString = numString.replace(currencySign, '');
+    numString = numString.replace('$', '');
     numString = numString.replace(' ', '');
 
     return parseFloat(numString);
@@ -1032,52 +1374,81 @@ const Locale = {  // eslint-disable-line
   /**
    * Takes a translation key and returns the translation in the current locale.
    * @param {string} key  The key to search for on the string.
-   * @param {boolean} [showAsUndefined] Causes a translated phrase to be shown in square brackets
+   * @param {object} [options] A list of options, supported are a non default locale and showAsUndefined which causes a translated phrase to be shown in square brackets
    * instead of defaulting to the default locale's version of the string.
    * @returns {string|undefined} a translated string, or nothing, depending on configuration
    */
-  translate(key, showAsUndefined) {
-    if (this.currentLocale.data === undefined || this.currentLocale.data.messages === undefined) {
+  translate(key, options) {
+    const languageData = this.useLanguage(options);
+    let showAsUndefined = false;
+    if (typeof options === 'boolean') {
+      showAsUndefined = options;
+    }
+    if (typeof options === 'object') {
+      showAsUndefined = options.showAsUndefined;
+    }
+
+    if (languageData.messages === undefined) {
       return showAsUndefined ? undefined : `[${key}]`;
     }
 
-    if (this.currentLocale.data.messages[key] === undefined) {
+    if (languageData.messages[key] === undefined) {
+      const enLang = 'en';
       // Substitue English Expression if missing
-      if (!this.cultures || !this.cultures['en-US'] || !this.cultures['en-US'].messages
-          || this.cultures['en-US'].messages[key] === undefined) {
+      if (!this.languages || !this.languages[enLang] || !this.languages[enLang].messages
+          || this.languages[enLang].messages[key] === undefined) {
         return showAsUndefined ? undefined : `[${key}]`;
       }
-      return this.cultures['en-US'].messages[key].value;
+      return this.languages[enLang].messages[key].value;
     }
 
-    return this.currentLocale.data.messages[key].value;
+    return languageData.messages[key].value;
   },
 
   /**
-   * Translate Day Period
-   * @private
-   * @param {string} period should be "am", "pm", "AM", "PM", or "i"
-   * @returns {string} the translated day period.
+   * Add an object full of translations to the given locale.
+   * @param {string} lang The language to add them to.
+   * @param  {object} messages Strings in the form of
    */
-  translateDayPeriod(period) {
-    if (/am|pm|AM|PM/i.test(period)) {
-      const periods = this.calendar().dayPeriods || ['AM', 'PM'];
-      return periods[/AM|am/i.test(period) ? 0 : 1];
+  extendTranslations(lang, messages) {
+    if (!this.languages[lang]) {
+      return;
     }
-    return period;
+    const base = this.languages[lang].messages;
+    this.languages[lang].messages = $.extend(false, base, messages);
   },
 
   /**
    * Shortcut function to get 'first' calendar
    * @private
+   * @param {string} locale The locale to use
+   * @param {string} name the name of the calendar (fx: "gregorian", "islamic-umalqura")
    * @returns {object} containing calendar data.
    */
-  calendar() {
-    if (this.currentLocale.data.calendars) {
-      return this.currentLocale.data.calendars[0];
+  calendar(locale, name) {
+    let calendars = [];
+    if (this.currentLocale.data.calendars && !locale) {
+      calendars = this.currentLocale.data.calendars;
     }
 
-    // Defaults to ISO 8601
+    if (locale && this.cultures[locale]) {
+      calendars = this.cultures[locale].calendars;
+    }
+
+    if (name && calendars) {
+      for (let i = 0; i < calendars.length; i++) {
+        const cal = calendars[i];
+        if (cal.name === name) {
+          return cal;
+        }
+      }
+    }
+
+    if (calendars[0]) {
+      return calendars[0];
+    }
+
+    // Defaults to en-US
     return {
       dateFormat: {
         separator: '/',
@@ -1097,26 +1468,6 @@ const Locale = {  // eslint-disable-line
   },
 
   /**
-   * Access the calendar array
-   * @private
-   * @param {string} name the name of the calendar (fx: "gregorian", "islamic-umalqura")
-   * @returns {object} containing calendar data
-   */
-  getCalendar(name) {
-    if (this.currentLocale.data.calendars) {
-      for (let i = 0; i < this.currentLocale.data.calendars.length; i++) {
-        const calendar = this.currentLocale.data.calendars[i];
-        if (calendar.name === name) {
-          return calendar;
-        }
-      }
-    }
-
-    // Defaults to ISO 8601
-    return [{ dateFormat: 'yyyy-MM-dd', timeFormat: 'HH:mm:ss' }];
-  },
-
-  /**
    * Shortcut function to get numbers
    * @private
    * @returns {object} containing information for formatting numbers
@@ -1124,7 +1475,7 @@ const Locale = {  // eslint-disable-line
   numbers() {
     return this.currentLocale.data.numbers ? this.currentLocale.data.numbers : {
       percentSign: '%',
-      percentFormat: '#,##0 %',
+      percentFormat: '### %',
       minusSign: '-',
       decimal: '.',
       group: ','
@@ -1150,7 +1501,7 @@ const Locale = {  // eslint-disable-line
    * @returns {boolean} whether or not this locale is "right-to-left".
    */
   isRTL() {
-    return this.currentLocale.data.direction === 'right-to-left';
+    return this.currentLanguage.direction === 'right-to-left';
   },
 
   /**
@@ -1268,6 +1619,7 @@ const Locale = {  // eslint-disable-line
       'add-grid-row',
       'additional-help',
       'bubble',
+      'bullet-steps',
       'cascade',
       'change-font',
       'clear-screen',

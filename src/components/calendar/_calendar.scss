@@ -138,7 +138,7 @@
       width: 20px;
 
       .icon {
-        fill: $font-color;
+        color: $font-color;
         height: 12px;
         top: initial;
         vertical-align: top;
@@ -216,9 +216,8 @@
     }
 
     .calendar-upcoming-date {
-      @include font-size(14);
-
       display: block;
+      font-size: $theme-size-font-base;
       padding: 10px;
     }
 
@@ -267,9 +266,8 @@
     }
 
     .calendar-upcoming-description {
-      @include font-size(12);
-
       display: inline-block;
+      font-size: $theme-size-font-sm;
       left: 5px;
       position: relative;
       top: -4px;
@@ -277,9 +275,8 @@
     }
 
     .calendar-upcoming-status-text {
-      @include font-size(12);
-
       display: block;
+      font-size: $theme-size-font-sm;
       font-style: italic;
       left: 25px;
       position: relative;
@@ -291,10 +288,9 @@
     }
 
     .calendar-upcoming-duration {
-      @include font-size(12);
-
       display: block;
       float: right;
+      font-size: $theme-size-font-sm;
       font-style: italic;
       position: relative;
       right: 5px;
@@ -334,14 +330,14 @@
     background-color: $calendar-bg-color;
 
     .data {
-      @include font-size(12);
+      font-size: $theme-size-font-sm;
     }
 
     .icon {
-      height: 14px;
-      margin-bottom: -3px;
-      margin-left: 0;
-      margin-top: -5px;
+      height: 16px;
+      margin-left: 5px;
+      margin-top: 1px;
+      width: 16px;
     }
 
     .field {
@@ -363,9 +359,8 @@
     }
 
     a {
-      @include font-size(18);
-
       color: $theme-color-palette-white;
+      font-size: $theme-size-font-lg;
       -webkit-font-smoothing: antialiased;
       font-weight: 400;
     }
@@ -375,7 +370,7 @@
       margin-top: -7px;
 
       .chevron {
-        fill: $theme-color-palette-white;
+        color: $theme-color-palette-white;
       }
     }
 

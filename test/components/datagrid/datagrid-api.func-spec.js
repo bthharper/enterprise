@@ -61,15 +61,18 @@ describe('Datagrid API', () => {
     expect(datagridObj).toEqual(jasmine.any(Object));
   });
 
-  it('Should render datagrid', () => {
+  it('Should render datagrid', (done) => {
     datagridObj.destroy();
     const spyEvent = spyOnEvent($(datagridEl), 'rendered');
     const spyEventAfter = spyOnEvent($(datagridEl), 'afterrender');
     datagridObj = new Datagrid(datagridEl, { dataset: data, columns });
 
-    expect(spyEvent).toHaveBeenTriggered();
-    expect(spyEventAfter).toHaveBeenTriggered();
-    expect(document.body.querySelectorAll('tr').length).toEqual(8);
+    setTimeout(() => {
+      expect(spyEvent).toHaveBeenTriggered();
+      expect(spyEventAfter).toHaveBeenTriggered();
+      expect(document.body.querySelectorAll('tr').length).toEqual(8);
+      done();
+    });
   });
 
   it('Should destroy datagrid', () => {
@@ -78,24 +81,14 @@ describe('Datagrid API', () => {
     expect(document.body.querySelector('.datagrid')).toBeFalsy();
   });
 
-  it('Should be able to call render', (done) => {
-    let didCall = false;
-
+  it('Should be able to call render', () => {
     datagridObj.destroy();
     datagridObj = new Datagrid(datagridEl, {
       filterable: true,
       dataset: data,
       columns,
       paging: true,
-      pagesize: 10,
-      source(e) {
-        if (e.type === 'filterrow') {
-          didCall = true;
-
-          expect(didCall).toBeTruthy();
-          done();
-        }
-      }
+      pagesize: 10
     });
 
     expect(document.body.querySelectorAll('tr').length).toEqual(8);
@@ -189,11 +182,12 @@ describe('Datagrid API', () => {
 
   it('Should be able to show tooltip on either text cut off or not', (done) => {
     datagridObj.destroy();
-    columns[1].width = 500;
-    columns[1].tooltip = 'Some tooltip data';
+    const newColumns = columns.concat();
+    newColumns[1].width = 500;
+    newColumns[1].tooltip = 'Some tooltip data';
     datagridObj = new Datagrid(datagridEl, {
       dataset: data,
-      columns,
+      columns: newColumns,
       enableTooltips: true
     });
     const td = document.body.querySelector('tbody tr[aria-rowindex="2"] td[aria-colindex="2"]');
@@ -203,6 +197,50 @@ describe('Datagrid API', () => {
       expect(document.body.querySelector('.grid-tooltip')).toBeTruthy();
       done();
     }, 500);
+  });
+
+  it('Should be able to show tooltip on header text cut off with ellipsis', (done) => {
+    datagridObj.destroy();
+    const newColumns = columns.concat();
+    newColumns[6].width = 100;
+    newColumns[6].textOverflow = 'ellipsis';
+    datagridObj = new Datagrid(datagridEl, {
+      dataset: data,
+      columns: newColumns,
+      enableTooltips: true
+    });
+    let th = document.body.querySelector('.datagrid-header thead th[data-column-id="orderDate"]');
+    let el = th.querySelector('.datagrid-column-wrapper');
+    $(el).trigger('mouseover');
+
+    setTimeout(() => {
+      expect(th.getAttribute('class')).toContain('text-ellipsis');
+      expect(th.getAttribute('class')).toContain('is-ellipsis-active');
+      expect(document.body.querySelector('.grid-tooltip')).toBeTruthy();
+
+      newColumns[6].width = 200;
+      datagridObj.updateColumns(newColumns);
+      th = document.body.querySelector('.datagrid-header thead th[data-column-id="orderDate"]');
+      const td = document.body.querySelector('tbody tr[aria-rowindex="2"] td[aria-colindex="2"]');
+      $(td).trigger('click');
+
+      expect(th.getAttribute('class')).toContain('text-ellipsis');
+      expect(th.getAttribute('class')).not.toContain('is-ellipsis-active');
+      expect(document.body.querySelector('.grid-tooltip')).toBeTruthy();
+      expect(document.body.querySelector('.grid-tooltip.is-hidden')).toBeTruthy();
+
+      setTimeout(() => {
+        th = document.body.querySelector('.datagrid-header thead th[data-column-id="orderDate"]');
+        el = th.querySelector('.datagrid-column-wrapper');
+        $(el).trigger('mouseover');
+
+        expect(th.getAttribute('class')).toContain('text-ellipsis');
+        expect(th.getAttribute('class')).not.toContain('is-ellipsis-active');
+        expect(document.body.querySelector('.grid-tooltip')).toBeTruthy();
+        expect(document.body.querySelector('.grid-tooltip.is-hidden')).toBeTruthy();
+        done();
+      }, 500);
+    }, 700);
   });
 
   it('Should be able to show tooltip rowStatus', (done) => {

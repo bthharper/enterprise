@@ -22,7 +22,9 @@ Soho.Locale.addCulture('en-AU', {
       month: 'd MMMM',
       year: 'MMMM yyyy',
       timestamp: 'h:mm:ss a',
-      datetime: 'd/MM/yyyy h:mm a'
+      datetime: 'd/MM/yyyy h:mm a',
+      timezone: 'd/MM/yyyy h:mm a zz',
+      timezoneLong: 'd/MM/yyyy h:mm a zzzz'
     }, // Infered short + short gregorian/dateTimeFormats
     // ca-gregorian/main/dates/calendars/gregorian/days/format/short or abbreviated (2 digit)
     days: {
@@ -42,14 +44,15 @@ Soho.Locale.addCulture('en-AU', {
   }],
   // numbers/currencyFormats-numberSystem-latn/standard
   currencySign: '$',
-  currencyFormat: '¤#,##0.00',
+  currencyFormat: '¤###',
   // numbers/symbols-numberSystem-latn
   numbers: {
     percentSign: '%',
-    percentFormat: '#,##0 %',
+    percentFormat: '### %',
     minusSign: '-',
     decimal: '.',
-    group: ','
+    group: ',',
+    groupSizes: [3, 3]
   },
   // Resx - Provided By Translation Team
   messages: {
@@ -230,7 +233,7 @@ Soho.Locale.addCulture('en-AU', {
     Minus: { id: 'Minus', value: 'Minus', comment: 'Minus tooltip' },
     Mobile: { id: 'Mobile', value: 'Mobile', comment: 'Indicates a mobile device (phone tablet ect)' },
     Month: { id: 'Month', value: 'Month', comment: 'As in a date month' },
-    More: { id: 'More', value: 'More...', comment: 'Text Indicating More Buttons or form content' },
+    More: { id: 'More', value: 'More', comment: 'Text Indicating More Buttons or form content' },
     MoreActions: { id: 'MoreActions', value: 'More Actions', comment: 'Text on the More Actions button indictating hidden functions' },
     MoveToLeft: { id: 'MoveToLeft', value: 'Move to left', comment: 'Button tooltip used in a list of movable items' },
     MoveToRight: { id: 'MoveToRight', value: 'Move to right', comment: 'Button tooltip used in a list of movable items' },

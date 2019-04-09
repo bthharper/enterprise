@@ -62,9 +62,15 @@ describe('Accordion example-accordion-panels tests', () => {
 describe('Accordion example-ajax tests', () => {
   beforeEach(async () => {
     await utils.setPage('/components/accordion/test-ajax');
+
+    await browser.driver
+      .wait(protractor.ExpectedConditions.visibilityOf(await element(by.css('#ajax-accordion .accordion-header'))), config.waitsFor);
   });
 
   it('Should not have errors', async () => {
+    await browser.driver
+      .wait(protractor.ExpectedConditions.visibilityOf(await element(by.css('#ajax-accordion .accordion-header'))), config.waitsFor);
+
     await utils.checkForErrors();
   });
 

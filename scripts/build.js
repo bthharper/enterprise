@@ -71,10 +71,12 @@ const createDirs = require('./build/create-dirs');
 const getFileContents = require('./build/get-file-contents');
 const runBuildProcess = require('./build/run-build-process');
 const writeFile = require('./build/write-file');
+const createSvgHtml = require('./build/create-svg-html');
 
 const SRC_DIR = path.join(__dirname, '..', 'src');
 const TEMP_DIR = path.join(__dirname, '..', 'temp');
 const TEST_DIR = path.join(__dirname, '..', 'test');
+const NM_DIR = path.join(__dirname, '..', 'node_modules');
 const RELATIVE_SRC_DIR = path.join('..', 'src');
 
 // CR-LF on Windows, LF on Linux/Mac
@@ -103,7 +105,7 @@ const filePaths = {
         'dark-theme': path.join(SRC_DIR, 'themes', 'dark-theme.scss'),
         'high-contrast-theme': path.join(SRC_DIR, 'themes', 'high-contrast-theme.scss'),
         'light-theme': path.join(SRC_DIR, 'themes', 'light-theme.scss'),
-        'uplift-alpha-theme': path.join(SRC_DIR, 'themes', 'uplift-alpha-theme.scss'),
+        'uplift-theme': path.join(SRC_DIR, 'themes', 'uplift-theme.scss'),
       }
     }
   },
@@ -129,7 +131,7 @@ const filePaths = {
         'dark-theme': path.join(TEMP_DIR, 'dark-theme.scss'),
         'high-contrast-theme': path.join(TEMP_DIR, 'high-contrast-theme.scss'),
         'light-theme': path.join(TEMP_DIR, 'light-theme.scss'),
-        'uplift-alpha-theme': path.join(TEMP_DIR, 'uplift-alpha-theme.scss')
+        'uplift-theme': path.join(TEMP_DIR, 'uplift-theme.scss')
       }
     },
     log: {
@@ -139,7 +141,6 @@ const filePaths = {
       source: path.join(TEMP_DIR, 'source.txt')
     }
   }
-
 };
 
 // These search terms are used when scanning existing index files to determine
@@ -860,6 +861,10 @@ function runBuildProcesses(requested) {
   let targetSassConfig = 'dist';
   let rollupArgs = '-c';
 
+  if (commandLineArgs.verbose) {
+    rollupArgs += ' --verbose';
+  }
+
   // if Requested
   if (Array.isArray(requested) && requested.length) {
     isCustom = true;
@@ -895,6 +900,8 @@ function runBuildProcesses(requested) {
   } else if (!isCustom || sassMatches.length) {
     buildPromises.push(runBuildProcess(`node ${path.join('.', 'scripts', 'build-sass.js')} --type=${targetSassConfig}`));
   }
+
+  buildPromises.push(createSvgHtml(commandLineArgs.verbose));
 
   return Promise.all(buildPromises);
 }

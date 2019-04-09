@@ -426,6 +426,9 @@ ToolbarFlexItem.prototype = {
             if (elementLink) {
               e.preventDefault();
               itemLinkAPI.selectedAnchor = $(elementLink).children('a');
+            } else {
+              // case of a menu button overflowed into more actions
+              itemLinkAPI.selectedAnchor = anchor;
             }
             itemLinkAPI.selected = true;
             return;
@@ -501,11 +504,10 @@ ToolbarFlexItem.prototype = {
     }
 
     // Action Buttons need more stuff
-    if (this.type !== 'actionbutton') {
-      return;
+    if (this.type === 'actionbutton') {
+      this.renderMoreActionsMenu();
+      this.refreshMoreActionsMenu();
     }
-    this.renderMoreActionsMenu();
-    this.refreshMoreActionsMenu();
 
     this.handleEvents();
   },
@@ -736,6 +738,7 @@ ToolbarFlexItem.prototype = {
     if (this.type === 'menubutton') {
       const menuElem = this.componentAPI.menu;
       const originalSubmenuData = this.componentAPI.toData({ noMenuWrap: true });
+      itemData.id = this.componentAPI.element[0].id;
       itemData.submenu = addMenuElementLinks(menuElem[0], originalSubmenuData);
     }
 

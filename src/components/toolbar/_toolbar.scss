@@ -261,9 +261,8 @@ $toolbar-buttonset-height: 40px;
     padding: 0 20px;
 
     .title {
-      @include font-size(14);
-
       color: $contextual-toolbar-color;
+      font-size: $theme-size-font-base;
       height: 42px;
     }
 
@@ -283,7 +282,7 @@ $toolbar-buttonset-height: 40px;
       }
 
       .icon {
-        fill: $contextual-toolbar-button-color;
+        color: $contextual-toolbar-button-color;
       }
 
       &.btn-actions {
@@ -302,7 +301,7 @@ $toolbar-buttonset-height: 40px;
         color: $contextual-toolbar-button-hover-color;
 
         .icon {
-          fill: $contextual-toolbar-button-hover-color;
+          color: $contextual-toolbar-button-hover-color;
         }
       }
 
@@ -310,14 +309,14 @@ $toolbar-buttonset-height: 40px;
         color: $contextual-toolbar-color;
 
         .icon {
-          fill: $contextual-toolbar-color;
+          color: $contextual-toolbar-color;
         }
 
         &:focus:not(.hide-focus) {
           color: $contextual-toolbar-color;
 
           .icon {
-            fill: $contextual-toolbar-color;
+            color: $contextual-toolbar-color;
           }
         }
       }
@@ -419,4 +418,14 @@ html[dir='rtl'] {
 
   }
 
+}
+
+@media print {
+  .toolbar {
+    &.has-more-button {
+      .more {
+        display: none !important;
+      }
+    }
+  }
 }

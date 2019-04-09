@@ -158,16 +158,35 @@ Radar.prototype = {
       return;
     }
 
+    // Get the name text from given data
+    const getNameText = (d) => {
+      const size = { min: 328, max: 469 };
+      let text = '';
+      if (dims.w <= size.min) {
+        text = d.shortName || d.abbrName || d.name || '';
+      } else if (dims.w >= (size.min + 1) && dims.w <= size.max) {
+        text = d.abbrName || d.name || '';
+      } else if (dims.w > size.max) {
+        text = d.name || '';
+      }
+      return text;
+    };
+
     let tooltipInterval;
     const colors = d3.scaleOrdinal(self.settings.colors);
 
     // If the supplied maxValue is smaller than the actual one, replace by the max in the data
     const maxValue = Math.max(settings.maxValue, d3.max(data, i => d3.max(i.data.map(o => o.value))));  //eslint-disable-line
 
-    const allAxis = data[0].data.map(i => i.name); // Map the names to the axis
-    const total = allAxis.length; // The number of different axes
-    const radius = Math.min(dims.w / 2, dims.h / 2); // Radius of the outermost circle
+    const allAxes = data[0].data.map(d => getNameText(d)); // Map the names to the axes
+    const total = allAxes.length; // The number of different axes
+    let radius = Math.min(dims.w / 2, dims.h / 2); // Radius of the outermost circle
     const angleSlice = Math.PI * 2 / total; // The width in radians of each 'slice'
+
+    if (dims.w <= 328) {
+      const extra = dims.w < 225 ? 75 : 50; // Reduce the size of the radar
+      radius = Math.min((dims.w - extra) / 2, (dims.h - extra) / 2);
+    }
 
     // Create the Scale for the radius
     const rScale = d3.scaleLinear()
@@ -244,7 +263,7 @@ Radar.prototype = {
 
     // Create the straight lines radiating outward from the center
     const axis = axisGrid.selectAll('.axis')
-      .data(allAxis)
+      .data(allAxes)
       .enter()
       .append('g')
       .attr('class', 'axis');
@@ -268,8 +287,15 @@ Radar.prototype = {
       .attr('dy', '0.35em')
       .attr('x', (d, i) => rScale(maxValue * settings.labelFactor) * Math.cos(angleSlice * i - Math.PI / 2))
       .attr('y', (d, i) => rScale(maxValue * settings.labelFactor) * Math.sin(angleSlice * i - Math.PI / 2))
-      .text(d => d)
-      .call(charts.wrap, settings.wrapWidth, settings.labelFactor);
+      .text(d => d);
+
+    this.element[dims.w < 420 ? 'addClass' : 'removeClass']('is-small');
+
+    if (dims.w > 456) {
+      svg.selectAll('.chart-radar-axis-wrapper .axis .legend').each(function () {
+        charts.wrap(d3.select(this), settings.wrapWidth, settings.labelFactor);
+      });
+    }
 
     // Draw the radar chart blobs
 

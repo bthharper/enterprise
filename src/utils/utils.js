@@ -250,16 +250,21 @@ utils.parseSettings = function parseSettings(element, attr) {
 };
 
 /**
- * Deprecate `utils.parseOptions` in favor of `utils.parseSettings`
+ * Deprecate `utils.parseOptions` in favor of `utils.parseSettings`.
+ * This method is slated to be removed in a future v4.10.0 or v5.0.0.
  * @private
- * @deprecated
- * TODO: Remove in 4.4.1 ?
+ * @deprecated as of v4.4.0. Please use `parseSettings()` instead.
+ * @param {HTMLElement|jQuery[]} element the element whose options are being parsed
+ * @param {string} [attr] an optional alternate attribute name to use when obtaining settings
+ * @returns {Object|Object[]} an object representation of parsed settings.
  */
-utils.parseOptions = utils.parseSettings;
+utils.parseOptions = function parseOptions(element, attr) {
+  return utils.parseSettings(element, attr);
+};
 
 /**
 * jQuery Behavior Wrapper for `utils.parseOptions`.
-* @deprecated
+* @deprecated as of v4.4.0. This is no longer necessary to call directly and should be avoided.
 * @private
 * @param {HTMLElement|jQuery[]} element the element whose options are being parsed
 * @param {string} [attr] an optional alternate attribute name to use when obtaining settings
@@ -1033,6 +1038,29 @@ math.sign = function (x) {
 utils.getArrayFromList = function (listObj) {
   const unboundSlice = Array.prototype.slice;
   return Function.prototype.call.bind(unboundSlice)(listObj);
+};
+
+/**
+ * Gets the OS scollbar width in pixels.
+ * @returns {number} The width as a number.
+ */
+utils.getScrollbarWidth = function () {
+  const outer = document.createElement('div');
+  outer.style.visibility = 'hidden';
+  outer.style.width = '100px';
+  document.body.appendChild(outer);
+
+  const widthNoScroll = outer.offsetWidth;
+  outer.style.overflow = 'scroll';
+
+  const inner = document.createElement('div');
+  inner.style.width = '100%';
+  outer.appendChild(inner);
+
+  const widthWithScroll = inner.offsetWidth;
+  outer.parentNode.removeChild(outer);
+
+  return widthNoScroll - widthWithScroll;
 };
 
 export { utils, math };

@@ -232,9 +232,6 @@ PopupMenu.prototype = {
       }
     });
 
-    // Enforce Correct Modality
-    this.menu.parent('.popupmenu-wrapper').attr('role', 'application').attr('aria-hidden', 'true');
-
     // Use "absolute" positioning on the menu insead of "fixed", only when the
     // menu lives <body> tag and we have a <body> element that is tall enough to
     // scroll and is allowed to scroll.
@@ -421,10 +418,8 @@ PopupMenu.prototype = {
       </svg>`;
     }
 
-    return stringUtils.stripWhitespace(`<li class="popupmenu-item${disabledClass}${hiddenClass}${selectableClass}${submenuClass}">
-      <a${id} href="#">
-        ${icon}
-        <span>${settings.text}</span>
+    return stringUtils.stripWhitespace(`<li${id} class="popupmenu-item${disabledClass}${hiddenClass}${selectableClass}${submenuClass}">
+      <a${id} href="#">${icon}<span>${settings.text}</span>
         ${ddicon}
       </a>
       ${submenu}
@@ -567,6 +562,7 @@ PopupMenu.prototype = {
 
     const lis = contextElement.find('li:not(.heading):not(.separator)');
     let hasIcons = false;
+    contextElement[0].setAttribute('role', 'menu');
 
     lis.each((i, li) => {
       const a = $(li).children('a')[0]; // TODO: do this better when we have the infrastructure
@@ -1595,7 +1591,13 @@ PopupMenu.prototype = {
     }
 
     // Close open dropdowns
-    $('#dropdown-list').remove();
+    const openDropdown = $('.dropdown.is-open');
+    if (openDropdown.length > 0) {
+      const dropDownApi = openDropdown.parent().prev().data('dropdown');
+      if (dropDownApi) {
+        dropDownApi.closeList('cancel');
+      }
+    }
 
     this.element.addClass('is-open');
     this.menu.addClass('is-open').attr('aria-hidden', 'false');

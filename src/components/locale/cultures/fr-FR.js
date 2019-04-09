@@ -21,7 +21,9 @@ Soho.Locale.addCulture('fr-FR', {
       month: 'd MMMM',
       year: 'MMMM yyyy',
       timestamp: 'HH:mm:ss',
-      datetime: 'dd/MM/yyyy HH:mm'
+      datetime: 'dd/MM/yyyy HH:mm',
+      timezone: 'dd/MM/yyyy HH:mm zz',
+      timezoneLong: 'dd/MM/yyyy HH:mm zzzz'
     }, // Infered short + short gregorian/dateTimeFormats
     // ca-gregorian/main/dates/calendars/gregorian/days/format/short or abbreviated (2 digit)
     days: {
@@ -41,14 +43,15 @@ Soho.Locale.addCulture('fr-FR', {
   }],
   // numbers/currencyFormats-numberSystem-latn/standard
   currencySign: '€',
-  currencyFormat: '#,##0.00 ¤',
+  currencyFormat: '### ¤',
   // numbers/symbols-numberSystem-latn
   numbers: {
     percentSign: '%',
-    percentFormat: '#,##0 %',
+    percentFormat: '### %',
     minusSign: '-',
     decimal: ',',
-    group: ' '
+    group: ' ',
+    groupSizes: [3, 3]
   },
   // Resx - Provided By Translation Team
   messages: {
@@ -286,6 +289,8 @@ Soho.Locale.addCulture('fr-FR', {
     ResetDefault: { id: 'ResetDefault', value: 'Réinitialiser à valeur par défaut', comment: 'Reset Datagrid Columns, Filter and other Layout' },
     Result: { id: 'Result', value: 'Résultat', comment: 'Showing a single result in a List' },
     Results: { id: 'Results', value: 'Résultats', comment: 'As in showing N Results (plural) in a List' },
+    ResultOf: { id: 'ResultOf', value: '{0} de {1} Résultat', comment: 'Text Showing current and total number of Result' },
+    ResultsOf: { id: 'ResultsOf', value: '{0} de {1} Résultats', comment: 'Text Showing current and total number of Results' },
     RightAlign: { id: 'RightAlign', value: 'Alignement à droite', comment: 'Right Align tooltip' },
     RightAlignText: { id: 'RightAlignText', value: 'Alignement à droite', comment: 'Right Align Text tooltip' },
     Right: { id: 'Right', value: 'Droite', comment: 'Right' },

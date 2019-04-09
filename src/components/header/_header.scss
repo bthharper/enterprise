@@ -33,11 +33,11 @@ $subheader-height: 60px;
   }
 
   h1 {
-    @include font-size(18);
     @include transition(transform 150ms cubic-bezier(0.17, 0.04, 0.03, 0.94));
 
     color: $header-text-color;
     display: inline;
+    font-size: $theme-size-font-lg;
     font-weight: $theme-number-font-weight-base;
     margin-bottom: 0;
     text-overflow: ellipsis;
@@ -81,9 +81,8 @@ $subheader-height: 60px;
   }
 
   .page-title {
-    @include font-size(18);
-
     color: $header-text-color;
+    font-size: $theme-size-font-lg;
     margin-top: 3px;
 
     .alert .icon {
@@ -95,9 +94,8 @@ $subheader-height: 60px;
   }
 
   .section-title {
-    @include font-size(14);
-
     color: $header-text-color;
+    font-size: $theme-size-font-base;
     margin-top: 2px;
     padding: 0;
     text-transform: capitalize;
@@ -183,16 +181,16 @@ $subheader-height: 60px;
         color: $theme-color-palette-white !important;
 
         svg {
-          fill: $theme-color-palette-white !important;
+          color: $theme-color-palette-white !important;
         }
       }
 
       &:hover svg {
-        fill: $theme-color-palette-white !important;
+        color: $theme-color-palette-white !important;
       }
 
       svg {
-        fill: rgba(255, 255, 255, 0.7) !important;
+        color: rgba(255, 255, 255, 0.7) !important;
       }
     }
 
@@ -203,8 +201,7 @@ $subheader-height: 60px;
     }
 
     .panel-subhead {
-      @include font-size(14);
-
+      font-size: $theme-size-font-base;
       line-height: 1;
     }
 
@@ -306,12 +303,12 @@ $subheader-height: 60px;
       color: $header-button-color;
 
       .icon {
-        fill: $header-button-color;
+        color: $header-button-color;
       }
 
       &.is-open .icon,
       &.btn-menu.is-open .icon {
-        fill: $header-button-hover-color !important;
+        color: $header-button-hover-color !important;
       }
 
       .audible {
@@ -324,7 +321,7 @@ $subheader-height: 60px;
         color: $header-button-hover-color;
 
         .icon {
-          fill: $header-button-hover-color;
+          color: $header-button-hover-color;
         }
       }
 
@@ -332,7 +329,7 @@ $subheader-height: 60px;
         color: $header-button-focus-color;
 
         .icon {
-          fill: $header-button-focus-color;
+          color: $header-button-focus-color;
         }
       }
 
@@ -341,7 +338,7 @@ $subheader-height: 60px;
         color: $header-button-focus-color;
 
         .icon {
-          fill: $header-button-focus-color;
+          color: $header-button-focus-color;
         }
       }
 
@@ -350,7 +347,7 @@ $subheader-height: 60px;
           color: $header-button-focus-color;
 
           .icon {
-            fill: $header-button-focus-color;
+            color: $header-button-focus-color;
           }
         }
       }
@@ -359,7 +356,7 @@ $subheader-height: 60px;
         color: $header-button-disabled-color !important;
 
         .icon {
-          fill: $header-button-disabled-color !important;
+          color: $header-button-disabled-color !important;
         }
 
         &:hover {
@@ -390,10 +387,9 @@ $subheader-height: 60px;
     }
 
     .hyperlink {
-      @include font-size(14);
-
       color: $theme-color-palette-white;
       float: right;
+      font-size: $theme-size-font-base;
 
       &:focus:not(.hide-focus)::after,
       &:active::after {
@@ -419,7 +415,7 @@ $subheader-height: 60px;
     color: $header-button-color;
 
     .icon {
-      fill: $header-button-color;
+      color: $header-button-color;
     }
 
     &:focus:not(.hide-focus) {
@@ -577,7 +573,7 @@ html[dir='rtl'] {
 // Print Style Sheet
 @media print {
   body {
-    background-color: transparent;
+    background-color: transparent !important;
     width: 100%;
   }
 
@@ -592,6 +588,6 @@ html[dir='rtl'] {
   }
 
   svg {
-    fill: $theme-color-palette-graphite-70 !important;
+    color: $theme-color-palette-graphite-70 !important;
   }
 }

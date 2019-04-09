@@ -1,9 +1,9 @@
 <div class="row">
   <div class="twelve columns">
-    <button class="btn-secondary" type="button" id="add-context">Add Context</button><br><br>
+    <button class="btn-secondary" type="button" id="open-modal">Open Modal</button><br><br>
 
     <!-- "Context" Example -->
-    <div id="modal-content" style="display: none">
+    <div id="modal-content" style="display: none;">
       <div id="datagrid">
       </div>
     </div>
@@ -28,28 +28,62 @@
     data.push({ id: 6, productId: 2642206, productName: 'Some Compressor', activity:  'inspect and Repair', quantity: 41, price: '123.99', percent: .10, status: 'OK', orderDate: null, action: 'On Hold'});
 
     //Define Columns for the Grid.
-    columns.push({ id: 'productId', name: 'Id', field: 'productId', formatter: Formatters.Text, width: 100});
-    columns.push({ id: 'productName', name: 'Product Name', field: 'productName', formatter: Formatters.Hyperlink, width: 300});
+    columns.push({ id: 'selectionCheckbox', sortable: false, resizable: false, formatter: Formatters.SelectionCheckbox, align: 'center'});
+    columns.push({ id: 'productId', name: 'Id', field: 'productId', formatter: Formatters.Text});
+    columns.push({ id: 'productName', name: 'Product Name', field: 'productName', formatter: Formatters.Hyperlink});
     columns.push({ id: 'activity', name: 'Activity', field: 'activity'});
-    columns.push({ id: 'hidden', hidden: true, name: 'Hidden', field: 'hidden'});
+//    columns.push({ id: 'hidden', hidden: true, name: 'Hidden', field: 'hidden'});
     columns.push({ id: 'price', align: 'right', name: 'Actual Price', field: 'price', formatter: Formatters.Decimal, numberFormat: {minimumFractionDigits: 0, maximumFractionDigits: 0, style: 'currency', currencySign: '$'}});
     columns.push({ id: 'percent', align: 'right', name: 'Actual %', field: 'percent', formatter: Formatters.Decimal, numberFormat: {minimumFractionDigits: 0, maximumFractionDigits: 0, style: 'percent'}});
     columns.push({ id: 'orderDate', name: 'Order Date', field: 'orderDate', formatter: Formatters.Date, dateFormat: 'M/d/yyyy'});
-    columns.push({ id: 'phone', name: 'Phone', field: 'phone', formatter: Formatters.Text});
+//    columns.push({ id: 'phone', name: 'Phone', field: 'phone', formatter: Formatters.Text});
+    columns.push({ id: 'field1', name: 'Field1', field: 'field1', formatter: Formatters.Text });
+    columns.push({ id: 'field2', name: 'Field2', field: 'field2', formatter: Formatters.Text });
+    columns.push({ id: 'field3', name: 'Field3', field: 'field3', formatter: Formatters.Text });
+    columns.push({ id: 'field4', name: 'Field4', field: 'field4', formatter: Formatters.Text });
+    columns.push({ id: 'field5', name: 'Field5', field: 'field5', formatter: Formatters.Text });
+    columns.push({ id: 'field6', name: 'Field6', field: 'field6', formatter: Formatters.Text });
+    columns.push({ id: 'field7', name: 'Field7', field: 'field7', formatter: Formatters.Text });
+    columns.push({ id: 'field8', name: 'Field8', field: 'field8', formatter: Formatters.Text });
+    columns.push({ id: 'field9', name: 'Field9', field: 'field9', formatter: Formatters.Text });
+    columns.push({ id: 'field10', name: 'Field10', field: 'field10', formatter: Formatters.Text });
+    columns.push({ id: 'field11', name: 'Field11', field: 'field11', formatter: Formatters.Text });
+    columns.push({ id: 'field12', name: 'Field12', field: 'field12', formatter: Formatters.Text });
 
     //Init and get the api for the grid
-    $('#datagrid').datagrid({
+    grid = $('#datagrid').datagrid({
       columns: columns,
       dataset: data,
       saveColumns: false,
       paging: true,
-      pagesize: 5
+      pagesize: 5,
+      actionableMode: true,
+      cellNavigation: true,
+      editable: false,
+      enableTooltips: true,
+      filterWhenTyping: false,
+      redrawOnResize: false,
+      rowHeight: 'short',
+      selectable: 'single',
+      showDirty: false
       // toolbar: {title: 'Compressors', actions: true, rowHeight: true, personalize: true}
-    });
+    }).data('datagrid');
+
+    // Hide 10 of the columns to expose the issue
+    grid.hideColumn('field1');
+    grid.hideColumn('field2');
+    grid.hideColumn('field3');
+    grid.hideColumn('field4');
+    grid.hideColumn('field5');
+    grid.hideColumn('field6');
+    grid.hideColumn('field7');
+    grid.hideColumn('field8');
+    grid.hideColumn('field9');
+    grid.hideColumn('field10');
 
     var modals = {
-      'add-context': {
-        'title': 'Add Context',
+      'open-modal': {
+        'title': 'Open Modal',
         'content': $('#modal-content')
       }
     },
@@ -70,13 +104,14 @@
           },
           validate: false,
           isDefault: true
-        }]
+        }],
+        maxWidth: 1000
       }, opt);
 
       $('body').modal(opt);
     };
 
-    $('#add-context').on('click', function () {
+    $('#open-modal').on('click', function () {
       setModal(modals[this.id]);
     });
   });

@@ -1,0 +1,44 @@
+
+<div class="row">
+  <div class="twelve columns">
+    <div id="datagrid">
+    </div>
+  </div>
+</div>
+
+<script>
+    $('body').on('initialized', function () {
+      var columns = [],
+        data = [];
+
+      //Define Columns for the Grid.
+      columns.push({ id: 'activity', name: 'Activity', field: 'activity'});
+      columns.push({ id: 'quantity', name: 'Quantity', field: 'quantity'});
+      columns.push({ id: 'price1', name: 'Price', field: 'price', formatter: Formatters.Decimal, numberFormat: {minimumFractionDigits: 3, maximumFractionDigits: 3}, editor: Editors.Input, mask: '####,00'});
+      columns.push({ id: 'price2', name: 'Price ($)', field: 'price', formatter: Formatters.Decimal, numberFormat: {style: 'currency'}});
+      columns.push({ id: 'quantity', name: 'Quantity', field: 'quantity', formatter: Formatters.Decimal, numberFormat: {style: 'percent'}});
+      columns.push({ id: 'quantity', name: 'Integer', field: 'quantity', formatter: Formatters.Integer});
+      columns.push({ id: 'quantity', name: 'Decimal', field: 'quantity', formatter: Formatters.Decimal});
+
+      //Init and get the api for the grid
+      grid = $('#datagrid').datagrid({
+        columns: columns,
+        dataset: data,
+        editable: true
+      });
+
+      //Pass data in
+      $.get('{{basepath}}api/compressors?pageNum=1&sort=productId&pageSize=10', function(data) {
+        grid = grid.data('datagrid');
+        if (data.data && data.data.length > 1) {
+          var clone = JSON.parse(JSON.stringify(data.data));;
+          clone[0].quantity = 145000;
+          clone[1].quantity = 283423;
+          data.data.splice(0, 0, clone[0], clone[1]);
+        }
+        grid.loadData(data.data);
+      });
+
+    });
+
+</script>

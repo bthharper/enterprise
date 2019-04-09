@@ -22,7 +22,9 @@ Soho.Locale.addCulture('en-US', {
       month: 'MMMM d',
       year: 'MMMM yyyy',
       timestamp: 'h:mm:ss a',
-      datetime: 'M/d/yyyy h:mm a'
+      datetime: 'M/d/yyyy h:mm a',
+      timezone: 'M/d/yyyy h:mm a zz',
+      timezoneLong: 'M/d/yyyy h:mm a zzzz'
     }, // Infered short + short gregorian/dateTimeFormats
     // ca-gregorian/main/dates/calendars/gregorian/days/format/short or abbreviated (2 digit)
     days: {
@@ -43,14 +45,15 @@ Soho.Locale.addCulture('en-US', {
 
   // numbers/currencyFormats-numberSystem-latn/standard
   currencySign: '$', // (Replace Sign http://www.currencysymbols.in)
-  currencyFormat: '¤#,##0.00',
+  currencyFormat: '¤###',
   // numbers/symbols-numberSystem-latn
   numbers: {
     percentSign: '%',
-    percentFormat: '#,##0 %',
+    percentFormat: '### %',
     minusSign: '-',
     decimal: '.',
-    group: ','
+    group: ',',
+    groupSizes: [3, 3]
   },
   // Resx - Provided By Translation Team
   messages: {
@@ -96,6 +99,8 @@ Soho.Locale.addCulture('en-US', {
     ChangeView: { id: 'ChangeView', value: 'Change View', comment: 'Change the current page from a list of options' },
     Checkbox: { id: 'Checkbox', value: 'Checkbox', comment: 'Checkbox tooltip' },
     Checked: { id: 'Checked', value: 'Checked', comment: 'Checked tooltip' },
+    ChooseA: { id: 'ChooseA', value: 'Choose a ', comment: 'Audible tooltip for choosing a thing in a list.' },
+    ChooseAn: { id: 'ChooseAn', value: 'Choose an ', comment: 'Audible tooltip for choosing an item in a list.' },
     Clear: { id: 'Clear', value: 'Clear', comment: 'Tooltip for a Clear Action' },
     ClearFilter: { id: 'ClearFilter', value: 'Clear Filter', comment: 'Clear the current filter criteria' },
     ClearFormatting: { id: 'ClearFormatting', value: 'Clear Formatting', comment: 'Clear the formatting in editor' },
@@ -232,7 +237,7 @@ Soho.Locale.addCulture('en-US', {
     Minus: { id: 'Minus', value: 'Minus', comment: 'Minus tooltip' },
     Mobile: { id: 'Mobile', value: 'Mobile', comment: 'Indicates a mobile device (phone tablet ect)' },
     Month: { id: 'Month', value: 'Month', comment: 'As in a date month' },
-    More: { id: 'More', value: 'More...', comment: 'Text Indicating More Buttons or form content' },
+    More: { id: 'More', value: 'More', comment: 'Text Indicating More Buttons or form content' },
     MoreActions: { id: 'MoreActions', value: 'More Actions', comment: 'Text on the More Actions button indictating hidden functions' },
     MoveToLeft: { id: 'MoveToLeft', value: 'Move to left', comment: 'Button tooltip used in a list of movable items' },
     MoveToRight: { id: 'MoveToRight', value: 'Move to right', comment: 'Button tooltip used in a list of movable items' },
@@ -293,6 +298,8 @@ Soho.Locale.addCulture('en-US', {
     ResetDefault: { id: 'ResetDefault', value: 'Reset to Default', comment: 'Reset Datagrid Columns, Filter and other Layout' },
     Result: { id: 'Result', value: 'Result', comment: 'Showing a single result in a List' },
     Results: { id: 'Results', value: 'Results', comment: 'As in showing N Results (plural) in a List' },
+    ResultOf: { id: 'ResultOf', value: '{0} of {1} Result', comment: 'Text Showing current and total number of Result' },
+    ResultsOf: { id: 'ResultsOf', value: '{0} of {1} Results', comment: 'Text Showing current and total number of Results' },
     RightAlign: { id: 'RightAlign', value: 'Align Right', comment: 'Right Align tooltip' },
     RightAlignText: { id: 'RightAlignText', value: 'Align Right', comment: 'Right Align Text tooltip' },
     Right: { id: 'Right', value: 'Right', comment: 'Right' },
@@ -367,6 +374,7 @@ Soho.Locale.addCulture('en-US', {
     TreeCollapse: { id: 'TreeCollapse', value: 'Collapse Tree', comment: 'Tree Collapse tooltip' },
     TreeExpand: { id: 'TreeExpand', value: 'Expand Tree', comment: 'Tree Expand tooltip' },
     Turquoise: { id: 'Turquoise', value: 'Turquoise', comment: 'Color in our color pallette' },
+    TypeToFilter: { id: 'TypeToFilter', value: 'Type to filter', comment: 'Screen reader hit for screen reader users.' },
     Up: { id: 'Up', value: 'Up', comment: 'Up tooltip' },
     UpComing: { id: 'UpComing', value: 'Upcoming', comment: 'List of upcoming things (general)' },
     UpComingEvents: { id: 'UpComingEvents', value: 'Upcoming Events', comment: 'List of upcoming calendar events' },

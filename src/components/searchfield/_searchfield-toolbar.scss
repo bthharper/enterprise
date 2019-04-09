@@ -23,12 +23,12 @@ $toolbarsearchfield-category-empty-width: 51px;
 
   .searchfield {
     @include antialiased();
-    @include font-size(12);
 
     background-color: transparent;
     border: 1px solid transparent;
     box-shadow: none;
     color: $searchfield-text-color;
+    font-size: $theme-size-font-sm;
     font-weight: $theme-number-font-weight-bold;
     height: 34px;
     outline: 0;
@@ -37,24 +37,11 @@ $toolbarsearchfield-category-empty-width: 51px;
     text-overflow: ellipsis;
     width: 100%;
 
-    &::-webkit-input-placeholder {
-      @include font-size(12);
-
-      color: $searchfield-text-color;
-      font-weight: $theme-number-font-weight-bold;
-    }
-
-    &::-moz-placeholder {
-      @include font-size(12);
-
-      color: $searchfield-text-color;
-      font-weight: $theme-number-font-weight-bold;
-    }
-
+    &::-webkit-input-placeholder,
+    &::-moz-placeholder,
     &:-ms-input-placeholder {
-      @include font-size(12);
-
       color: $searchfield-text-color;
+      font-size: $theme-size-font-sm;
       font-weight: $theme-number-font-weight-bold;
     }
   }
@@ -83,11 +70,11 @@ $toolbarsearchfield-category-empty-width: 51px;
   }
 
   .icon {
-    fill: $searchfield-text-color;
+    color: $searchfield-text-color;
 
     &.close {
       background-color: rgba($searchfield-bg-color, 0);
-      fill: rgba($searchfield-text-color, 0);
+      color: rgba($searchfield-text-color, 0);
     }
 
     &:not(.close) {
@@ -152,7 +139,7 @@ $toolbarsearchfield-category-empty-width: 51px;
       color: rgba($searchfield-text-color, 0.7);
 
       .icon {
-        fill: rgba($searchfield-text-color, 0.7);
+        color: rgba($searchfield-text-color, 0.7);
       }
     }
 
@@ -185,38 +172,34 @@ $toolbarsearchfield-category-empty-width: 51px;
     // Searchfield changes text style to match other input fields
     .searchfield {
       color: $searchfield-text-color;
+      font-size: $theme-size-font-base;
       font-weight: $theme-number-font-weight-base;
       text-transform: none;
 
-      @include font-size(14);
-
       &::-webkit-input-placeholder {
         color: $searchfield-text-color;
+        font-size: $theme-size-font-base;
         font-weight: $theme-number-font-weight-base;
         text-transform: none;
-
-        @include font-size(14);
       }
 
       &::-moz-placeholder {
         color: $searchfield-text-color;
+        font-size: $theme-size-font-base;
         font-weight: $theme-number-font-weight-base;
         text-transform: none;
-
-        @include font-size(14);
       }
 
       &:-ms-input-placeholder {
         color: $searchfield-text-color;
+        font-size: $theme-size-font-base;
         font-weight: $theme-number-font-weight-base;
         text-transform: none;
-
-        @include font-size(14);
       }
     }
 
     .icon {
-      fill: $searchfield-text-color;
+      color: $searchfield-text-color;
       height: 14px;
       top: 10px;
     }
@@ -248,12 +231,6 @@ $toolbarsearchfield-category-empty-width: 51px;
         background-color: rgba($searchfield-alt-bg-color, 1);
         border-bottom-color: rgba($searchfield-alt-border-color, 1);
       }
-    }
-  }
-
-  &:not(.is-open) {
-    .icon.close {
-      display: none !important;
     }
   }
 
@@ -332,6 +309,8 @@ $toolbarsearchfield-category-empty-width: 51px;
       .go-button {
         border-bottom-left-radius: 0;
         border-top-left-radius: 0;
+        position: relative;
+        right: 0;
       }
     }
 
@@ -343,10 +322,8 @@ $toolbarsearchfield-category-empty-width: 51px;
   }
 
   &.has-go-button {
-    &.has-text {
-      .searchfield {
-        width: 100%;
-      }
+    .searchfield {
+      width: auto !important;
     }
   }
 
@@ -419,7 +396,7 @@ $toolbarsearchfield-category-empty-width: 51px;
       }
 
       .icon {
-        fill: $searchfield-card-bg-color;
+        color: $searchfield-card-bg-color;
 
         &.close {
           background-color: rgba($searchfield-card-bg-color, 1);
@@ -430,7 +407,7 @@ $toolbarsearchfield-category-empty-width: 51px;
     &:hover {
       input:not([disabled]):not(:focus) {
         + svg {
-          fill: $listview-toolbar-button-icon-hover-color;
+          color: $listview-toolbar-button-icon-hover-color;
         }
       }
     }
@@ -441,7 +418,7 @@ $toolbarsearchfield-category-empty-width: 51px;
 .masthead {
   .toolbar-searchfield-wrapper {
     .icon:not(.close) {
-      fill: $searchfield-header-icon-color;
+      color: $searchfield-header-icon-color;
       opacity: 0.7;
     }
 
@@ -457,7 +434,7 @@ $toolbarsearchfield-category-empty-width: 51px;
       color: $button-color-secondary-initial-font;
 
       .icon {
-        fill: $button-color-secondary-initial-font;
+        color: $button-color-secondary-initial-font;
       }
 
       &:hover {
@@ -519,7 +496,7 @@ $toolbarsearchfield-category-empty-width: 51px;
     &:hover {
       input:not([disabled]):not(:focus) {
         + svg {
-          fill: $searchfield-header-icon-color;
+          color: $searchfield-header-icon-color;
           opacity: 1;
         }
       }
@@ -531,7 +508,7 @@ $toolbarsearchfield-category-empty-width: 51px;
       }
 
       .icon {
-        fill: rgba($searchfield-header-icon-color, 0.7);
+        color: rgba($searchfield-header-icon-color, 0.7);
       }
     }
 
@@ -572,7 +549,7 @@ $toolbarsearchfield-category-empty-width: 51px;
 
     &.is-open {
       .icon {
-        fill: $searchfield-header-icon-color;
+        color: $searchfield-header-icon-color;
       }
     }
   }
@@ -601,6 +578,14 @@ $toolbarsearchfield-category-empty-width: 51px;
   }
 }
 
+.header {
+  .toolbar {
+    .toolbar-searchfield-wrapper {
+      text-align: right;
+    }
+  }
+}
+
 // For non-collapsible searchfields:  Only be non-collapsible on larger breakpoints.
 @media (min-width: $breakpoint-phone-to-tablet) {
   .toolbar-searchfield-wrapper.non-collapsible {
@@ -608,35 +593,31 @@ $toolbarsearchfield-category-empty-width: 51px;
 
     // reset all the styling for the searchfield to correctly appear open.
     .searchfield {
-      @include font-size(14);
-
       background-color: rgba($searchfield-bg-color, 1);
       border-bottom-color: rgba($searchfield-border-color, 1);
       border-radius: 0;
       color: $searchfield-text-color;
+      font-size: $theme-size-font-base;
       font-weight: $theme-number-font-weight-base;
       text-transform: none;
 
       &::-webkit-input-placeholder {
-        @include font-size(14);
-
         color: $searchfield-text-color;
+        font-size: $theme-size-font-base;
         font-weight: $theme-number-font-weight-base;
         text-transform: none;
       }
 
       &::-moz-placeholder {
-        @include font-size(14);
-
         color: $searchfield-text-color;
+        font-size: $theme-size-font-base;
         font-weight: $theme-number-font-weight-base;
         text-transform: none;
       }
 
       &:-ms-input-placeholder {
-        @include font-size(14);
-
         color: $searchfield-text-color;
+        font-size: $theme-size-font-base;
         font-weight: $theme-number-font-weight-base;
         text-transform: none;
       }
@@ -652,7 +633,7 @@ $toolbarsearchfield-category-empty-width: 51px;
 
     &.is-open {
       .icon {
-        fill: $searchfield-text-color;
+        color: $searchfield-text-color;
       }
     }
   }
@@ -668,7 +649,7 @@ $toolbarsearchfield-category-empty-width: 51px;
 
       &.is-open {
         .icon {
-          fill: $listview-toolbar-button-icon-color;
+          color: $listview-toolbar-button-icon-color;
         }
       }
     }
@@ -697,7 +678,7 @@ $toolbarsearchfield-category-empty-width: 51px;
 
       &.is-open {
         .icon {
-          fill: $searchfield-header-icon-color;
+          color: $searchfield-header-icon-color;
         }
       }
     }
@@ -705,9 +686,15 @@ $toolbarsearchfield-category-empty-width: 51px;
 }
 
 html[dir='rtl'] {
-  .toolbar-searchfield-wrapper {
-    text-align: right;
+  .header {
+    .toolbar {
+      .toolbar-searchfield-wrapper {
+        text-align: left;
+      }
+    }
+  }
 
+  .toolbar-searchfield-wrapper {
     &.has-text {
       &:not(.is-open) {
         .searchfield {
@@ -736,7 +723,8 @@ html[dir='rtl'] {
 
       &.show-category {
         .searchfield {
-          padding-right: 10px;
+          padding-left: 22px;
+          padding-right: 5px;
         }
       }
     }
@@ -785,16 +773,66 @@ html[dir='rtl'] {
     }
 
     &.has-go-button {
-      > .icon.close {
-        right: 35px;
+      width: auto !important;
+
+      > .icon {
+        &.close {
+          color: $searchfield-header-icon-color;
+          right: 45px;
+        }
       }
     }
   }
 
   html[dir='rtl'] {
     .toolbar-searchfield-wrapper.has-go-button > .icon.close {
-      left: 35px;
+      left: 45px;
       right: auto;
+    }
+  }
+}
+
+@include respond-to(phonedown) {
+  .toolbar-searchfield-wrapper {
+    &.has-categories {
+      &.show-category {
+        .btn {
+          padding-right: 5px;
+        }
+      }
+
+      &.has-go-button {
+        > .icon {
+          &.close {
+            right: 60px;
+          }
+        }
+
+        .searchfield {
+          padding-right: 40px;
+          width: auto !important;
+        }
+
+        .go-button {
+          right: 17px;
+        }
+      }
+    }
+  }
+
+  html[dir='rtl'] {
+    .toolbar-searchfield-wrapper {
+      &.has-categories {
+        &.has-go-button {
+          > .icon.close {
+            left: 40px;
+          }
+
+          .go-button {
+            right: 0;
+          }
+        }
+      }
     }
   }
 }

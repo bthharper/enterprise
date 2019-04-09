@@ -3,13 +3,12 @@
 
 .popover,
 .tooltip {
-  @include font-size(12);
-
   background-color: $tooltip-bg-color;
   border: 1px solid $tooltip-border-color;
   border-radius: 2px;
   box-shadow: $tooltip-box-shadow;
   color: $tooltip-color;
+  font-size: $theme-size-font-sm;
   left: -9999px;
   max-width: 300px;
   min-width: 40px;
@@ -53,9 +52,8 @@
   }
 
   .hyperlink {
-    @include font-size(12);
-
     color: $tooltip-color;
+    font-size: $theme-size-font-sm;
 
     &:hover {
       color: $tooltip-color;
@@ -97,20 +95,19 @@
   }
 
   p {
-    @include font-size(12);
-
     color: $tooltip-color;
+    font-size: $theme-size-font-sm;
     word-break: normal;
     word-wrap: break-word;
   }
 
   span {
-    @include font-size(12);
+    font-size: $theme-size-font-sm;
   }
 
   .icon {
+    color: $tooltip-color;
     display: inline-block;
-    fill: $tooltip-color;
     height: 14px;
     margin-top: 2px;
     width: 14px;
@@ -240,7 +237,7 @@
     .tooltip-title {
       background-color: $popover-alternate-title-bg-color;
       color: $popover-alternate-color;
-      font-size: 1.8rem;
+      font-size: $theme-size-font-lg;
       padding: 15px 5px 15px 15px;
     }
 
@@ -253,13 +250,13 @@
 
     th {
       color: $popover-alternate-subheader-color;
-      font-size: 1.2rem;
+      font-size: $theme-size-font-sm;
     }
 
     td,
     p {
       color: $popover-alternate-color;
-      font-size: 1.4rem;
+      font-size: $theme-size-font-base;
       text-align: left;
     }
   }
@@ -298,7 +295,7 @@
   &.filled {
     background-color: $theme-color-palette-azure-70;
     color: $theme-color-palette-white;
-    font-size: 1.8rem;
+    font-size: $theme-size-font-lg;
     -webkit-font-smoothing: antialiased;
     margin: -1px;
     padding: 15px 5px 15px 15px;
@@ -309,7 +306,7 @@
     }
 
     .icon-close {
-      fill: $theme-color-palette-white;
+      color: $theme-color-palette-white;
     }
   }
 
@@ -348,6 +345,7 @@
 
 .tooltip-content {
   padding: 7px 10px 5px;
+  word-break: normal;
 
   // Error Tooltip Styling
   li {

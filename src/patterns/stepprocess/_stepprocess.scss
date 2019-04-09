@@ -18,18 +18,16 @@
     }
 
     .heading {
-      @include font-size(18);
-
       color: $font-color-extrahighcontrast;
       display: table-cell;
+      font-size: $theme-size-font-lg;
       height: 60px;
       padding-left: 20px;
       vertical-align: middle;
 
       small {
-        @include font-size(14);
-
         display: block;
+        font-size: $theme-size-font-base;
         margin: 2px 0 0;
         padding: 0;
         text-transform: capitalize;
@@ -46,6 +44,12 @@
       left: 10px;
       position: absolute;
       top: 13px;
+    }
+
+    &.phone-visible .title {
+      left: 4px;
+      position: relative;
+      top: 2px;
     }
   }
 
@@ -89,7 +93,7 @@
           .icon,
           .icon-success,
           .icon-error {
-            fill: $accordion-selected-text-color !important;
+            color: $accordion-selected-text-color !important;
           }
         }
       }
@@ -114,9 +118,8 @@
 
         span {
           display: inline-block;
+          font-size: $theme-size-font-base;
           max-width: 80%;
-
-          @include font-size(14);
         }
 
         .tree-text {
@@ -129,11 +132,9 @@
     li.folder > a {
       .icon-tree {
         display: block;
-        height: 28px;
         position: absolute;
         right: 15px;
-        top: calc(50% - 14px);
-        width: 28px;
+        top: calc(50% - 8px);
       }
     }
 
@@ -229,6 +230,7 @@
     .toolbar-collapsible {
       @include transition(margin-top 300ms cubic-bezier(0.17, 0.04, 0.03, 0.94));
 
+      padding-right: 10px;
       position: absolute;
       top: 0;
       width: 100%;
@@ -312,6 +314,7 @@
     }
 
     .phone-action-bar {
+      border-top: 1px solid $panel-border-color;
       bottom: 0;
       position: absolute;
       width: 100%;
@@ -329,6 +332,23 @@
 
 html[dir='rtl'] {
   .step-process-container {
+    .toolbar-custom {
+      .actions {
+        left: 0;
+        right: auto;
+      }
+
+      .btn-toggle-steps {
+        left: auto;
+        right: 10px;
+      }
+
+      .heading {
+        padding-left: initial;
+        padding-right: 20px;
+      }
+    }
+
     .tree {
       ul {
         right: auto;
@@ -366,6 +386,65 @@ html[dir='rtl'] {
           > a .icon-tree {
             left: 15px;
             right: auto;
+          }
+        }
+      }
+    }
+  }
+
+  @include respond-to(tablet) {
+    .step-process-container {
+      &.tablet-hide-steps {
+        .main,
+        .sidebar {
+          @include transform(translateX(250px));
+        }
+      }
+    }
+  }
+
+  @include respond-to(tabletdown) {
+    .step-process-container {
+      .toolbar-custom .heading {
+        padding-left: initial;
+        padding-right: 60px;
+      }
+
+      .toolbar-collapsible {
+        padding-left: 10px;
+        padding-right: initial;
+      }
+    }
+  }
+
+  @include respond-to(phone) {
+    .step-process-container {
+      .sidebar {
+        @include css3(transform, translateX(0));
+      }
+
+      .main {
+        @include css3(transform, translateX(-100%));
+      }
+
+      &.phone-hide-steps {
+        .main {
+          @include css3(transform, translateX(0));
+        }
+
+        .sidebar {
+          @include css3(transform, translateX(100%));
+        }
+      }
+    }
+  }
+
+  &.ie11 {
+    @include respond-to(tablet) {
+      .step-process-container {
+        &.tablet-hide-steps {
+          .main {
+            @include transform(translateX(0));
           }
         }
       }

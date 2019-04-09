@@ -22,7 +22,9 @@ Soho.Locale.addCulture('es-ES', {
       month: 'd MMMM',
       year: 'MMMM de yyyy',
       timestamp: 'HH:mm:ss',
-      datetime: 'd/M/yyyy HH:mm'
+      datetime: 'd/M/yyyy HH:mm',
+      timezone: 'd/M/yyyy HH:mm zz',
+      timezoneLong: 'd/M/yyyy HH:mm zzzz'
     }, // Infered short + short gregorian/dateTimeFormats
     // ca-gregorian/main/dates/calendars/gregorian/days/format/short or abbreviated
     days: {
@@ -42,14 +44,15 @@ Soho.Locale.addCulture('es-ES', {
   }],
   // numbers/currencyFormats-numberSystem-latn/standard
   currencySign: '€',
-  currencyFormat: '#,##0.00 ¤',
+  currencyFormat: '### ¤',
   // numbers/symbols-numberSystem-latn
   numbers: {
     percentSign: '%',
-    percentFormat: '#,##0 %',
+    percentFormat: '### %',
     minusSign: '-',
     decimal: ',',
-    group: '.'
+    group: '.',
+    groupSizes: [3, 3]
   },
   // Resx
   messages: {
@@ -95,6 +98,8 @@ Soho.Locale.addCulture('es-ES', {
     ChangeView: { id: 'ChangeView', value: 'Cambiar vista', comment: 'Change the current page from a list of options' },
     Checkbox: { id: 'Checkbox', value: 'Casilla', comment: 'Checkbox tooltip' },
     Checked: { id: 'Checked', value: 'Activado', comment: 'Checked tooltip' },
+    ChooseA: { id: 'ChooseA', value: 'Escoge un ', comment: 'Audible tooltip for choosing a thing in a list.' },
+    ChooseAn: { id: 'ChooseAn', value: 'Elige un ', comment: 'Audible tooltip for choosing an item in a list.' },
     Clear: { id: 'Clear', value: 'Borrar', comment: 'Tooltip for a Clear Action' },
     ClearFilter: { id: 'ClearFilter', value: 'Borrar filtro', comment: 'Clear the current filter criteria' },
     ClearFormatting: { id: 'ClearFormatting', value: 'Borrar formato', comment: 'Clear the formatting in editor' },
@@ -366,6 +371,7 @@ Soho.Locale.addCulture('es-ES', {
     TreeCollapse: { id: 'TreeCollapse', value: 'Contraer árbol', comment: 'Tree Collapse tooltip' },
     TreeExpand: { id: 'TreeExpand', value: 'Expandir árbol', comment: 'Tree Expand tooltip' },
     Turquoise: { id: 'Turquoise', value: 'Turquesa', comment: 'Color in our color pallette' },
+    TypeToFilter: { id: 'TypeToFilter', value: 'Escriba para filtrar', comment: 'Screen reader hit for screen reader users.' },
     Up: { id: 'Up', value: 'Arriba', comment: 'Up tooltip' },
     UpComingEvents: { id: 'UpComingEvent', value: 'Próximos eventos', comment: 'List of upcoming calendar events' },
     UpComingTimeOff: { id: 'UpComingTimeOff', value: 'Próximo tiempo libre', comment: 'As in time off work' },

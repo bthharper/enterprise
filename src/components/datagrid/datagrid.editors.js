@@ -310,6 +310,8 @@ const editors = {
       const self = this;
 
       this.input.trigger('openlist');
+      const rowNodes = grid.rowNodes(row);
+      rowNodes.removeClass('is-hover-row');
       this.input.focus().select();
 
       this.input.off('listclosed').on('listclosed', () => {
@@ -448,6 +450,8 @@ const editors = {
       // Check if isClick or cell touch and just open the list
       if (event.type === 'click') {
         this.input.trigger('openlist');
+        const rowNodes = grid.rowNodes(row);
+        rowNodes.removeClass('is-hover-row');
         $('#dropdown-list input').focus();
       } else {
         this.input[0].parentNode.querySelector('div.dropdown').focus();
@@ -486,6 +490,10 @@ const editors = {
     };
 
     this.val = function (v) {
+      if (v === '0000' || v === '000000' || v === '00000000') {
+        // Means no date in some applications
+        v = '';
+      }
       if (v) {
         // Note that the value should be formatted from the formatter.
         this.input.val(v);

@@ -37,8 +37,12 @@ The IDS components are backed by both functional and end-to-end (e2e) test suite
 
 - Try to use `protractor.ExpectedConditions` rather than sleeps to make things faster, these wait for items in the DOM to change. For more into see [the protractor docs](https://www.protractortest.org/#/api?view=ProtractorExpectedConditions).
 - If you have to use a sleep make sure to use the right config for example `await browser.driver.sleep(config.sleep)`. This is only .5 seconds
-- Try not repeat yourself in tests. For example if you covered some functionality in one page, no need to test the same thing in another page.
 - If you see a sleep in the code, try to refactor it to use `protractor.ExpectedConditions`
+- Keep the test as simple as possible and just test one thing per test
+- Try not repeat yourself in tests. For example if you covered some functionality in one page, no need to test the same thing in another page.
+- We use `async` in the tests rather than promises see [this blog on async tests](https://chariotsolutions.com/blog/post/simplify-protractor-web-tests-with-async-and-await/)
+- Make sure you don't forget the awaits, the await is just on the things that return a promise for example. `await element(by.css('.pager-next')).click();` not `await element(await by.css('.pager-next')).click();`.
+- In functional tests use the `cleanup` function and make sure you remove everything in the page including the scripts and add an id for them.
 
 ## Running Functional Tests
 
@@ -208,6 +212,7 @@ Following the process below will safely create baseline images the CI can use du
 1. In your terminal, run `docker run --name travis-debug -dit travisci/ci-garnet:packer-1512502276-986baf0` to download the Travis CI docker image to mimic the environment. And wait....
 1. Open up the image and go in `docker exec -it travis-debug bash -l`
 1. Install [Node Version Manager (nvm)](https://github.com/creationix/nvm) using the latest version available (check their Github for more info)
+1. Set the timezone for some tests `cp /usr/share/zoneinfo/America/New_York /etc/localtime`
 
 ```sh
 wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
@@ -221,7 +226,7 @@ nvm install 10
 nvm use 10
 ```
 
-1. Go to your home directory `(`cd ~`)`
+1. Go to your home directory `(cd ~)`
 1. Clone IDS Enterprise repo, and navigate to it
 
 ```sh
@@ -247,6 +252,7 @@ npx grunt
 
 1. Run the `npm run quickstart` command in your current docker session to run the demoapp.
 1. Open a second session in the docker container, and run `npm run e2e:ci` to start the tests.
+    - Or you can `pico|vi` into one of the e2e test files, `fdescribe|fit` and `npm run e2e:ci:debug` to run individual tests instead of the whole suite
 
 ```sh
 npm run quickstart
@@ -264,13 +270,13 @@ Some tests will most likely fail.  These failures are due to visual differences.
 
 #### Replacing specific baseline images
 
-1. Remove the file from the baseline using a command like `rm test/baseline/searchfield-open-chrome-1200x800-dpr-1.png`
+1. Remove the file from the baseline using a command like `rm test/baseline/<name-of-test-file.png>`
 1. Run the tests and it should say `Image not found, saving current image as new baseline.`
-1. Copy the file locally and check it using `docker cp 9979cb17cbfc:/enterprise/test/.tmp/actual/searchfield-open-chrome-1200x800-dpr-1.png /Users/tmcconechy/dev/actual`
+1. Open a new shell on your local machine and copy the file and check it using: `docker cp <CONTAINER_ID>:/home/travis/enterprise/test/.tmp/actual/<name-of-test-file.png> /Users/<your_user_name>/<target_path>`
 1. If it looks visually as expected then copy it to the baseline
 
 ```sh
-mv test/.tmp/actual/searchfield-open-chrome-1200x800-dpr-1.png test/baseline/searchfield-open-chrome-1200x800-dpr-1.png`
+mv test/.tmp/actual/<name-of-test-file.png> test/baseline/<name-of-test-file.png>`
 ```
 
 1. Run tests again to confirm
@@ -281,14 +287,14 @@ mv test/.tmp/actual/searchfield-open-chrome-1200x800-dpr-1.png test/baseline/sea
 As mentioned, we can copy the last test run folder (actual) `test/.tmp/actual/<name-of-test-file.png>` and compare it to the baseline `test/baseline/<name-of-test-file.png>`. You use the docker cp command from your machine, and it goes into the container to copies the file out locally. Documentation for the command can be  [found here](https://docs.docker.com/engine/reference/commandline/cp/). Sample commands:
 
 ```sh
- docker cp 9979cb17cbfc:/enterprise/test/.tmp/actual/searchfield-open-chrome-1200x800-dpr-1.png /Users/tmcconechy/dev/actual
-cp 9979cb17cbfc:/enterprise/test/baseline/searchfield-open-chrome-1200x800-dpr-1.png /Users/tmcconechy/dev/baseline
+ docker cp <CONTAINER_ID>:/home/travis/enterprise/test/.tmp/actual/<name-of-test-file.png> /Users/<your_user_name>/<target_path>
+cp <CONTAINER_ID>:/home/travis/enterprise/test/baseline/<name-of-test-file.png> /Users/<your_user_name>/<target_path>
 ```
 
 Or copy them all to your local directory for inspection.
 
 ```sh
-docker cp INSERT_CONTAINER_ID:/home/travis/enterprise/test/.tmp .
+docker cp <CONTAINER_ID>:/home/travis/enterprise/test/.tmp .
 ```
 
 See [https://stackoverflow.com/questions/22907231/copying-files-from-host-to-docker-container](https://stackoverflow.com/questions/22907231/copying-files-from-host-to-docker-container) for additional help
@@ -296,6 +302,23 @@ See [https://stackoverflow.com/questions/22907231/copying-files-from-host-to-doc
 Once the files are copied to the host machine, check the image for quality, commit, and push.
 
 Tests should now pass on the branch CI as the baselines should be identical to the screenshots created during the test.
+
+## Making Accessibility e2e Tests with Axe
+
+Each component should have a passing e2e test with Axe. This tool will verify a few things for accessibility. We current ignore the contrast errors. An example of an e2e test with Axe is:
+
+```javascript
+if (!utils.isIE()) {
+  it('Should be accessible on click, and open with no WCAG 2AA violations', async () => {
+    await clickOnDropdown();
+    const res = await axePageObjects(browser.params.theme);
+
+    expect(res.violations.length).toEqual(0);
+  });
+}
+```
+
+You should make a test for any states the component has, like closed vs open, selected, deselected ect. If your having an issue with one of these tests you can either put a debugger into the test and follow the above steps for debugging an e2e test or you can install the [Axe Chome Dev Tools Plugin](https://chrome.google.com/webstore/detail/axe/lhdoppojpmngadmnindnejefpokejbdd?hl=en-US). This tool should give you the same output as the test.
 
 ## Testing Resources
 
@@ -308,16 +331,5 @@ Tests should now pass on the branch CI as the baselines should be identical to t
 <https://medium.com/powtoon-engineering/a-complete-guide-to-testing-javascript-in-2017-a217b4cd5a2a>
 <https://blog.kentcdodds.com/write-tests-not-too-many-mostly-integration-5e8c7fff591c>
 <http://jasonrudolph.com/blog/2008/10/07/testing-anti-patterns-potpourri-quotes-resources-and-collective-wisdom/>
-<https://marcysutton.github.io/a11y-and-ci/#/>
 <https://codecraft.tv/courses/angular/unit-testing/jasmine-and-karma/>
 <https://hackernoon.com/testing-your-frontend-code-part-ii-unit-testing-1d05f8d50859>
-
-## FAQ
-
-- How come we do so much browser exclusion logic?
-
-    Each browser has a different Selenium driver with different capabilities. We plan highlight this difference for manual testing. As browser capabilities get updated, we should revisit tests that don't work. As for the Chrome exclusions, we are only testing visual regression on Chrome, and Travis CI. Chrome is the default local functional test browser, and will be responsible for aiding the creation of the baseline images for visual regression testing.
-
-- Why are so many Axe Rules disabled?
-
-    This a bit complex as the light theme does not meet WCAG 2.0 Level AA requirements, and per component in various states (open/close) may not be WCAG 2.0 Level AA as well. Additional various rules are at the application level and not suitable for review on this level. Currently, this is a @TODO, we hope to enable rules like "color-contrast" which are critical to various users.

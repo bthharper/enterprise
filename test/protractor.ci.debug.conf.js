@@ -22,7 +22,12 @@ exports.config = {
         '--disable-dev-shm-usage',
         '--no-sandbox'
       ]
-   }
+    },
+    loggingPrefs: {
+      driver: 'INFO',
+      server: 'INFO',
+      browser: 'SEVERE'
+    }
   },
   directConnect: true,
   baseUrl: 'http://localhost:4000',
@@ -39,7 +44,7 @@ exports.config = {
       browser.protractorImageComparison = new protractorImageComparison({
         baselineFolder: `${basePath}/baseline`,
         screenshotPath: `${basePath}/.tmp/`,
-        autoSaveBaseline: false,
+        autoSaveBaseline: true,
         ignoreAntialiasing: true,
         disableCSSAnimation: true,
         debug: false

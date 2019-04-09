@@ -92,7 +92,7 @@ describe('Flex Toolbar', () => {
     expect(item.disabled).toBeFalsy();
   });
 
-  it('Can check for which of its items belongs in an overflow menu', () => {
+  it('Can check for which of its items belongs in an overflow menu', (done) => {
     // Test doesn't pass unless we have an actual width on the toolbar
     rowEl.style.width = '20000px';
     let overflow = toolbarAPI.overflowedItems;
@@ -102,12 +102,14 @@ describe('Flex Toolbar', () => {
     expect(overflow.length).toBe(0);
 
     // Change width of the container to change the overflow scenario.
-    rowEl.style.width = '700px';
+    rowEl.style.width = '690px';
     overflow = toolbarAPI.overflowedItems;
-
-    expect(overflow.length).toBe(3);
-    expect(overflow[0]).toEqual(jasmine.any(ToolbarFlexItem));
-    expect(overflow[0].overflowed).toBeTruthy();
+    setTimeout(() => {
+      expect(overflow.length).toBe(3);
+      expect(overflow[0]).toEqual(jasmine.any(ToolbarFlexItem));
+      expect(overflow[0].overflowed).toBeTruthy();
+      done();
+    }, 300);
   });
 
   it('Can programmatically navigate toolbar items', () => {
@@ -324,15 +326,66 @@ describe('Flex Toolbar', () => {
       expect(item.element.className.indexOf('is-selected')).toBeGreaterThan(-1);
     });
 
-    it('Can individually determine that it should be placed into overflow', () => {
+    it('Can individually determine that it should be placed into overflow', (done) => {
+      rowEl.style.width = '690px';
+      setTimeout(() => {
+        const textButton = toolbarAPI.items[0];
+
+        expect(textButton.overflowed).toBeFalsy();
+
+        const secondIconButton = toolbarAPI.items[3];
+
+        expect(secondIconButton.overflowed).toBeTruthy();
+        done();
+      }, 300);
+    });
+  });
+
+  describe('Item selected events', () => {
+    it('Should trigger "selected" event for a normal button', () => {
+      const button = toolbarAPI.items[0].element;
+      const buttonSpyEvent = spyOnEvent('div.buttonset button:first-child', 'selected');
+
+      button.click();
+
+      expect(buttonSpyEvent).toHaveBeenTriggered();
+    });
+
+    it('Should trigger "selected" event for a menu button', () => {
+      const menuButton = toolbarAPI.items[1];
+      const menuButtonSpyEvent = spyOnEvent('button#menu-button', 'selected');
+      const firstMenuEntry = document.body.querySelector('button#menu-button + div ul li a');
+
+      menuButton.componentAPI.open();
+      firstMenuEntry.click();
+
+      expect(menuButtonSpyEvent).toHaveBeenTriggered();
+    });
+
+    it('Should trigger "selected" event for overflow menu', () => {
+      const moreMenuButton = toolbarAPI.items[5];
+      const moreActionsSpyEvent = spyOnEvent('button.btn-actions', 'selected');
+      const firstMoreMenuEntry = document.body.querySelector('button.btn-actions + div ul li:nth-child(5) a');
+
+      moreMenuButton.componentAPI.open();
+      firstMoreMenuEntry.click();
+
+      expect(moreActionsSpyEvent).toHaveBeenTriggered();
+    });
+
+    it('Should trigger "selected" event for menu button in the overflow menu', () => {
       rowEl.style.width = '700px';
-      const textButton = toolbarAPI.items[0];
+      const moreMenuButton = toolbarAPI.items[5];
+      const moreActionsSpyEvent = spyOnEvent('button.btn-actions', 'selected');
+      const overflowedMenuButton = document.body.querySelector('button.btn-actions + div ul li:nth-child(2)');
+      const firstMoreMenuEntry = document.body.querySelector('button.btn-actions + div ul li:nth-child(2) a#item-one');
 
-      expect(textButton.overflowed).toBeFalsy();
+      moreMenuButton.componentAPI.open();
+      $(overflowedMenuButton).trigger('mouseover');
 
-      const secondIconButton = toolbarAPI.items[3];
+      firstMoreMenuEntry.click();
 
-      expect(secondIconButton.overflowed).toBeTruthy();
+      expect(moreActionsSpyEvent).toHaveBeenTriggered();
     });
   });
 });

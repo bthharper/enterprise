@@ -5,31 +5,31 @@
 
 @mixin list-icon-colors {
   &.error {
-    fill: $error-color;
+    color: $error-color;
   }
 
   &.alert {
-    fill: $theme-color-status-warning;
+    color: $theme-color-status-warning;
   }
 
   &.alert-yellow {
-    fill: $theme-color-status-caution;
+    color: $theme-color-status-caution;
   }
 
   &.neutral {
-    fill: $alert-neutral;
+    color: $alert-neutral;
   }
 
   &.good {
-    fill: $theme-color-status-success;
+    color: $theme-color-status-success;
   }
 
   &.info {
-    fill: $theme-color-status-base;
+    color: $theme-color-status-base;
   }
 
   &.white {
-    fill: $theme-color-palette-white;
+    color: $theme-color-palette-white;
   }
 }
 
@@ -104,7 +104,7 @@ div.multiselect {
     text-overflow: ellipsis;
     vertical-align: top;
 
-    &:empty::before {
+    &[data-placeholder-text]::before {
       color: $input-placeholder-color;
       content: attr(data-placeholder-text);
       -webkit-text-fill-color: $input-placeholder-color;
@@ -114,7 +114,7 @@ div.multiselect {
   > .listoption-icon {
     @include list-icon-colors();
 
-    fill: $popupmenu-icon-color;
+    color: $popupmenu-icon-color;
     height: 16px;
     left: 14px;
     position: absolute;
@@ -143,8 +143,8 @@ div.multiselect {
     .icon,
     + .icon {
       background-color: $input-color-disabled-background;
+      color: $trigger-disabled-color;
       cursor: default;
-      fill: $trigger-disabled-color;
     }
   }
 
@@ -152,7 +152,7 @@ div.multiselect {
     border-color: $trigger-active-color;
 
     + .icon {
-      fill: $trigger-active-color;
+      color: $trigger-active-color;
     }
   }
 
@@ -160,7 +160,7 @@ div.multiselect {
     border-color: $trigger-hover-color;
 
     + .icon {
-      fill: $trigger-hover-color;
+      color: $trigger-hover-color;
     }
   }
 
@@ -168,9 +168,9 @@ div.multiselect {
   + .icon {
     background-color: inherit;
     border-radius: 1px;
+    color: $trigger-icon-fill-color;
     cursor: pointer;
     display: inline-block;
-    fill: $trigger-icon-fill-color;
     height: 32px;
     margin-left: -33px;
     pointer-events: none;
@@ -186,6 +186,11 @@ div.multiselect {
     color: $input-readonly-color;
     cursor: text;
     -webkit-text-fill-color: $input-readonly-color;
+
+    &[tabindex='-1']:focus {
+      border-color: $input-color-readonly-border !important;
+      box-shadow: none;
+    }
   }
 
   &:focus {
@@ -202,7 +207,7 @@ div.multiselect {
   border: 1px solid $dropdown-menu-border-color;
   border-radius: 3px;
   box-shadow: $dropdown-shadow-initial-boxshadow, $focus-box-shadow;
-  font-size: 1.4rem;
+  font-size: $theme-size-font-base;
   max-height: 340px;
   min-height: 30px;
   overflow: hidden;
@@ -234,10 +239,9 @@ div.multiselect {
   }
 
   ul {
-    @include font-size(14);
-
     background-color: $popupmenu-bg-color;
     color: $popupmenu-color;
+    font-size: $theme-size-font-base;
     height: auto;
     line-height: 32px;
     overflow-x: hidden;
@@ -251,7 +255,7 @@ div.multiselect {
     cursor: pointer;
     position: relative;
 
-    i {
+    .dropdown-highlight {
       color: $dropdown-color-initial-icon;
       font-style: normal;
       text-decoration: none;
@@ -302,7 +306,7 @@ div.multiselect {
       }
 
       .listoption-icon {
-        fill: $inverse-color;
+        color: $inverse-color;
       }
 
       .badge {
@@ -315,7 +319,7 @@ div.multiselect {
     .listoption-icon {
       @include list-icon-colors();
 
-      fill: $popupmenu-icon-color;
+      color: $popupmenu-icon-color;
       height: 16px;
       left: 0;
       margin-right: 7px;
@@ -339,7 +343,7 @@ div.multiselect {
   > .listoption-icon {
     @include list-icon-colors();
 
-    fill: $popupmenu-icon-color;
+    color: $popupmenu-icon-color;
     height: 16px;
     left: 10px;
     position: absolute;
@@ -376,7 +380,7 @@ div.multiselect {
   // Added to the dropdown list when doing a search
   &.search-mode {
     li {
-      i {
+      .dropdown-highlight {
         color: $font-color-extrahighcontrast;
         font-weight: $theme-number-font-weight-bold;
         letter-spacing: -0.2;
@@ -389,7 +393,7 @@ div.multiselect {
       }
 
       &.is-focused {
-        i {
+        .dropdown-highlight {
           color: $inverse-color;
         }
       }
@@ -455,7 +459,7 @@ div.multiselect {
 
     &.search-mode {
       a {
-        i {
+        .dropdown-highlight {
           color: $font-color-highcontrast;
         }
       }
@@ -464,9 +468,9 @@ div.multiselect {
 
   .group-label {
     @include css3(user-select, none);
-    @include font-size(12);
 
-    color: $label-color-initial-font;
+    color: $label-color;
+    font-size: $theme-size-font-sm;
     font-weight: $theme-number-font-weight-bold;
     line-height: 20px;
     min-height: 20px;
@@ -493,18 +497,14 @@ div.multiselect {
     z-index: 1;
 
     .icon {
-      @include css3(transform, rotate(180deg));
-
       background-color: rgba($theme-color-palette-white, 0);
-      fill: $trigger-icon-fill-color;
-      height: 32px;
-      width: 18px;
+      color: $trigger-icon-fill-color;
+      left: -2px;
+      top: 8px;
 
       &.search {
-        @include css3(transform, rotate(0deg));
-
         height: 18px;
-        margin-top: 7px;
+        margin-top: 0;
         width: 16px;
       }
 
@@ -603,8 +603,7 @@ input.dropdown.error:focus {
 //Shorter Field Size
 .field-short {
   div.dropdown {
-    @include font-size(12);
-
+    font-size: $theme-size-font-sm;
     margin-bottom: 0;
     padding: 5px 21px 5px 5px;
 
@@ -630,6 +629,7 @@ input.dropdown.error:focus {
 
     ~ .icon-error {
       margin-left: -38px;
+      position: absolute;
       right: auto;
       top: 0;
     }
@@ -675,8 +675,7 @@ div.dropdown-xs,
 // Shorter Drop Down Lists
 .dropdown-list.dropdown-short {
   .dropdown-search {
-    @include font-size(12);
-
+    font-size: $theme-size-font-sm;
     padding: 5px 32px 5px 5px;
   }
 
@@ -687,8 +686,7 @@ div.dropdown-xs,
   }
 
   ul {
-    @include font-size(12);
-
+    font-size: $theme-size-font-sm;
     text-indent: 5px;
   }
 
@@ -819,8 +817,7 @@ div.dropdown-xs,
 
     &.dropdown-short {
       .dropdown-search {
-        @include font-size(12);
-
+        font-size: $theme-size-font-sm;
         padding: 5px 21px 5px 5px;
       }
     }

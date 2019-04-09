@@ -13,7 +13,7 @@ describe('Applicationmenu index tests', () => {
   it('Should show the app menu', async () => {
     const button = await element(by.css('.application-menu-trigger'));
     await button.click();
-    await browser.driver.sleep(config.sleep);
+    await browser.driver.sleep(config.sleepLonger);
 
     expect(await element(by.id('application-menu')).isDisplayed()).toBeTruthy();
   });
@@ -101,7 +101,7 @@ describe('Applicationmenu container tests', () => {
   it('Should show the app menu', async () => {
     const button = await element(by.css('.application-menu-trigger'));
     await button.click();
-    await browser.driver.sleep(config.sleep);
+    await browser.driver.sleep(config.sleepLonger);
 
     expect(await element(by.id('application-menu')).isDisplayed()).toBeTruthy();
     expect(await element.all(by.css('.accordion-header')).count()).toEqual(17);
@@ -110,5 +110,27 @@ describe('Applicationmenu container tests', () => {
 
   it('Should not have errors', async () => {
     await utils.checkForErrors();
+  });
+});
+
+describe('Applicationmenu accordion truncated text tooltip tests', () => {
+  beforeEach(async () => {
+    await utils.setPage('/components/applicationmenu/test-tooltips');
+
+    const truncatedText = await element(by.id('truncated-text'));
+    await browser.driver
+      .wait(protractor.ExpectedConditions.presenceOf(truncatedText), config.waitsFor);
+  });
+
+  it('Should not have errors', async () => {
+    await utils.checkForErrors();
+  });
+
+  it('Should show tooltip on truncated text', async () => {
+    await browser.actions().mouseMove(element(by.id('truncated-text'))).perform();
+    await browser.driver
+      .wait(protractor.ExpectedConditions.presenceOf(await element(by.id('tooltip'))), config.waitsFor);
+
+    expect(await element(by.id('tooltip')).isPresent()).toBeTruthy();
   });
 });

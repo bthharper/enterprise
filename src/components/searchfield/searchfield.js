@@ -2,6 +2,7 @@ import Promise from 'promise-polyfill';
 
 import { Environment as env } from '../../utils/environment';
 import * as debug from '../../utils/debug';
+import { warnAboutDeprecation } from '../../utils/deprecated';
 import { breakpoints } from '../../utils/breakpoints';
 import { utils } from '../../utils/utils';
 import { xssUtils } from '../../utils/xss';
@@ -67,7 +68,7 @@ function SearchField(element, settings) {
   this.element = $(element);
 
   // Backwards compatibility for old toolbars that had `collapsible` and `clearable` as the defaults
-  if (this.toolbarParent && settings !== undefined) {
+  if (this.toolbarParent && !this.isContainedByFlexToolbar && settings !== undefined) {
     if (settings.clearable === undefined) {
       settings.clearable = true;
     }
@@ -979,10 +980,11 @@ SearchField.prototype = {
 
   /**
    * Detects whether or not the Searchfield has focus.
-   * @deprecated in v4.8.x
+   * @deprecated in v4.8.0.  Please use the `isFocused` property instead.
    * @returns {boolean} whether or not the Searchfield has focus.
    */
   hasFocus() {
+    warnAboutDeprecation('isFocused', 'hasFocus');
     return this.isFocused;
   },
 
@@ -1873,7 +1875,8 @@ SearchField.prototype = {
    */
   checkContents() {
     let textMethod = 'remove';
-    if (this.input.value.trim() !== '') {
+    const value = !this.input.value ? '' : this.input.value.trim();
+    if (value !== '') {
       textMethod = 'add';
     }
     this.wrapper[0].classList[textMethod]('has-text');

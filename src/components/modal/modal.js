@@ -1,4 +1,5 @@
 import * as debug from '../../utils/debug';
+import { warnAboutDeprecation } from '../../utils/deprecated';
 import { utils } from '../../utils/utils';
 import { Locale } from '../../../src/components/locale/locale';
 
@@ -26,6 +27,7 @@ const COMPONENT_NAME = 'modal';
 * @param {function} [settings.beforeShow=null] A call back function that can be used to return data for the modal.
 * @param {boolean} [settings.useFlexToolbar] If true the new flex toolbar will be used (For CAP)
 * @param {boolean} [settings.showCloseBtn] If true, show a close icon button on the top right of the modal.
+* @param {number} [settings.maxWidth=null] Optional max width to add in pixels.
 * return the markup in the response and this will be shown in the modal. The busy indicator will be shown while waiting for a response.
 */
 const MODAL_DEFAULTS = {
@@ -40,7 +42,8 @@ const MODAL_DEFAULTS = {
   frameWidth: 46,
   beforeShow: null,
   useFlexToolbar: false,
-  showCloseBtn: false
+  showCloseBtn: false,
+  maxWidth: null
 };
 
 function Modal(element, settings) {
@@ -169,7 +172,7 @@ Modal.prototype = {
     let isAppended = false;
 
     this.element = $(`${'<div class="modal">' +
-        '<div class="modal-content">' +
+        '<div class="modal-content" style="max-width: '}${this.settings.maxWidth ? this.settings.maxWidth : ''}px${'">' +
           '<div class="modal-header"><h1 class="modal-title">'}${this.settings.title}</h1></div>` +
           '<div class="modal-body-wrapper">' +
             '<div class="modal-body"></div>' +
@@ -759,12 +762,9 @@ Modal.prototype = {
   resize() {
     // 90% -(180 :extra elements-height)
     let calcHeight = ($(window).height() * 0.9) - this.settings.frameHeight;
-    const calcWidth = ($(window).width() * 1.05) - this.settings.frameWidth;
+    const calcWidth = ($(window).width() * 1) - this.settings.frameWidth;
 
     const wrapper = this.element.find('.modal-body-wrapper');
-
-    // Remove width for backwards compat
-    this.element.find('.modal-contents').css('width', '');
 
     if (wrapper.length) {
       wrapper[0].style.maxHeight = `${calcHeight}px`;
@@ -788,10 +788,12 @@ Modal.prototype = {
   },
 
   /**
-   * @deprecated as of v4.14.x
+   * This method is slated to be removed in a future v4.20.0 or v5.0.0.
+   * @deprecated as of v4.14.0. Please use the `visible` property instead.
    * @returns {boolean} The current state open (true) or closed (false).
    */
   isOpen() {
+    warnAboutDeprecation('visible', 'isOpen');
     return this.visible;
   },
 

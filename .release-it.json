@@ -1,25 +1,23 @@
 {
-  "dry-run": false,
-  "requireCleanWorkingDir": true,
-  "non-interactive": false,
-  "verbose": false,
-  "pkgFiles": ["package.json"],
-  "increment": "patch",
-  "buildCommand": "npm run build && npm run zip-dist",
-  "src": {
-    "commitMessage": "Release v%s",
-    "tagAnnotation": "Release v%s",
-    "beforeStartCommand": "npm run eslint:error-only",
-    "afterReleaseCommand": "./scripts/after-release.sh ${npm.tag} ${version}"
-  },
-  "npm": {
-    "publish": true,
-    "tag": "latest"
-  },
-  "github": {
-    "release": true,
-    "releaseName": "v%s",
-    "tokenRef": "GITHUB_ACCESS_TOKEN",
-    "assets": "dist.zip"
-  }
+    "pkgFiles": [
+        "package.json"
+    ],
+    "scripts": {
+        "beforeStart": "npm run eslint:error-only",
+        "afterBump": "npm run clean && npm run build && npm run minify && npm run zip-dist",
+        "afterRelease": "./scripts/after-release.sh ${npm.tag} ${version}"
+    },
+    "git": {
+        "commitMessage": "Release v${version}",
+        "tagAnnotation": "Release v${version}"
+    },
+    "npm": {
+        "tag": "latest"
+    },
+    "github": {
+        "release": true,
+        "releaseName": "v%s",
+        "tokenRef": "GITHUB_ACCESS_TOKEN",
+        "assets": "dist.zip"
+    }
 }

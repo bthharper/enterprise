@@ -9,7 +9,7 @@ jasmine.getEnv().addReporter(browserStackErrorReporter);
 describe('Listview example-singleselect tests', () => {
   beforeEach(async () => {
     await utils.setPage('/components/listview/example-singleselect');
-    const listviewEl = await element(by.id('period-end'));
+    const listviewEl = await element(by.css('#period-end li'));
     await browser.driver
       .wait(protractor.ExpectedConditions.presenceOf(listviewEl), config.waitsFor);
   });
@@ -90,7 +90,7 @@ describe('Listview example-singleselect tests', () => {
 describe('Listview example-multiselect tests', () => {
   beforeEach(async () => {
     await utils.setPage('/components/listview/example-multiselect');
-    const listviewEl = await element(by.id('multiselect-listview'));
+    const listviewEl = await element(by.css('#multiselect-listview li'));
     await browser.driver
       .wait(protractor.ExpectedConditions.presenceOf(listviewEl), config.waitsFor);
   });
@@ -130,6 +130,7 @@ describe('Listview example-multiselect tests', () => {
   it('Should deselect item on click', async () => {
     const listviewItemEl = await element(by.css('li[aria-posinset="1"]'));
     await listviewItemEl.click();
+    await browser.driver.sleep(config.sleep);
     await browser.driver
       .wait(protractor.ExpectedConditions.presenceOf(element(by.css('li[aria-selected="true"].is-selected'))), config.waitsFor);
 
@@ -137,6 +138,7 @@ describe('Listview example-multiselect tests', () => {
     expect(await element(by.className('selection-count')).getText()).toContain('1 Selected');
 
     listviewItemEl.click();
+    await browser.driver.sleep(config.sleep);
     await browser.driver
       .wait(protractor.ExpectedConditions.presenceOf(element(by.css('li[aria-selected="false"]'))), config.waitsFor);
 
@@ -196,7 +198,7 @@ describe('Listview example-multiselect tests', () => {
 describe('Listview example-mixed selection tests', () => {
   beforeEach(async () => {
     await utils.setPage('/components/listview/example-mixed-selection');
-    const listviewEl = await element(by.id('task-listview'));
+    const listviewEl = await element(by.css('#task-listview li'));
     await browser.driver
       .wait(protractor.ExpectedConditions.presenceOf(listviewEl), config.waitsFor);
   });
@@ -248,8 +250,7 @@ describe('Listview example-mixed selection tests', () => {
   });
 
   it('Should activate element on click outside of checkbox', async () => {
-    const listviewItemElOne = await element(by.css('li[aria-posinset="1"]'));
-    await listviewItemElOne.click();
+    await await element(by.css('li[aria-posinset="1"]')).click();
     await browser.driver
       .wait(protractor.ExpectedConditions.presenceOf(element(by.css('li[aria-posinset="1"].is-activated'))), config.waitsFor);
 
@@ -260,7 +261,7 @@ describe('Listview example-mixed selection tests', () => {
 describe('Listview example-search tests', () => {
   beforeEach(async () => {
     await utils.setPage('/components/listview/example-search');
-    const listviewEl = await element(by.id('search-listview'));
+    const listviewEl = await element(by.css('#search-listview li'));
     await browser.driver
       .wait(protractor.ExpectedConditions.presenceOf(listviewEl), config.waitsFor);
   });
@@ -273,7 +274,7 @@ describe('Listview example-search tests', () => {
     });
   }
 
-  it('Should hide unmatching items based on search term, and highlight pattern', async () => {
+  it('Should not render items that don\'t match the search term', async () => {
     const searchListviewEl = await element(by.id('gridfilter'));
     await browser.driver
       .wait(protractor.ExpectedConditions.presenceOf(searchListviewEl), config.waitsFor);
@@ -283,11 +284,21 @@ describe('Listview example-search tests', () => {
     await browser.driver
       .wait(protractor.ExpectedConditions.textToBePresentInElementValue(await element(by.id('gridfilter')), 'to'), config.waitsFor);
 
-    expect(await element(by.css('li[aria-posinset="2"]')).getText()).toContain('Update pending quotes and send out again to customers.');
-    expect(await element(by.css('li[aria-posinset="2"]')).isDisplayed()).toBeTruthy();
-    expect(await element.all(by.css('li[aria-posinset="2"] .highlight')).first().getText()).toContain('to');
-    expect(await element(by.css('li[aria-posinset="1"]')).isDisplayed()).toBeFalsy();
-    expect(await element(by.css('li[aria-posinset="1"]')).getAttribute('class')).toContain('hidden');
+    // Should only be one search result
+    expect(await element.all(by.css('#search-listview li')).count()).toEqual(1);
+  });
+
+  it('Should highlight the matching parts of search results', async () => {
+    const searchListviewEl = await element(by.id('gridfilter'));
+    await browser.driver
+      .wait(protractor.ExpectedConditions.presenceOf(searchListviewEl), config.waitsFor);
+    await searchListviewEl.click();
+    await browser.driver.switchTo().activeElement().clear();
+    await browser.driver.switchTo().activeElement().sendKeys('to');
+    await browser.driver
+      .wait(protractor.ExpectedConditions.textToBePresentInElementValue(await element(by.id('gridfilter')), 'to'), config.waitsFor);
+
+    expect(await element.all(by.css('#search-listview li .highlight')).first().getText()).toContain('to');
   });
 });
 
@@ -308,12 +319,9 @@ describe('Listview example-paging tests', () => {
   }
 
   it('Should render initial page', async () => {
-    expect(await element.all(by.css('.listview ul li')).count()).toEqual(24);
-
-    expect(await element.all(by.css('.listview ul li')).get(0).isDisplayed()).toEqual(true);
-    expect(await element.all(by.css('.listview ul li')).get(9).isDisplayed()).toEqual(true);
-    expect(await element.all(by.css('.listview ul li')).get(10).isDisplayed()).toEqual(false);
-    expect(await element.all(by.css('.listview ul li')).get(23).isDisplayed()).toEqual(false);
+    expect(await element.all(by.css('.listview ul li')).count()).toEqual(10);
+    expect(await element(by.css('.listview ul li:first-child')).getAttribute('aria-setsize')).toEqual('24');
+    expect(await element(by.css('.listview ul li:last-child')).getAttribute('aria-posinset')).toEqual('10');
   });
 
   it('Should click page "2" in pager bar, and display new listings', async () => {
@@ -350,16 +358,15 @@ describe('Listview example-paging tests', () => {
 describe('Listview example-index tests', () => {
   beforeEach(async () => {
     await utils.setPage('/components/listview/example-index');
-    const listviewEl = await element(by.id('task-listview'));
+    const listviewEl = await element(by.css('#task-listview li'));
     await browser.driver
       .wait(protractor.ExpectedConditions.presenceOf(listviewEl), config.waitsFor);
   });
 
   it('Should do nothing on a disabled item', async () => {
-    const listviewDisabledEl = await element(by.css('.is-disabled'));
-    await listviewDisabledEl.click();
+    await await element(by.css('li.is-disabled')).click();
 
-    expect(await element(by.className('is-disabled')).getAttribute('disabled').isPresent()).toBeTruthy();
+    expect(await element(by.css('li.is-disabled')).getAttribute('disabled').isPresent()).toBeTruthy();
   });
 });
 
@@ -410,10 +417,48 @@ describe('Listview example-paging-clientside tests', () => {
   });
 });
 
+describe('Listview server-side indeterminate paging tests', () => {
+  beforeEach(async () => {
+    await utils.setPage('/components/listview/test-paging-indeterminate?layout=nofrills');
+    const listviewItem = await element(by.css('.listview li[role="option"]'));
+    await browser.driver
+      .wait(protractor.ExpectedConditions.presenceOf(listviewItem), config.waitsFor);
+  });
+
+  it('can navigate to page 2', async () => {
+    expect(await element.all(by.css('.listview li[role="option"]')).count()).toEqual(10);
+    expect(await element(by.css('.listview li[role="option"]:first-child .listview-heading')).getText()).toEqual('Compressor 0');
+
+    await element(by.css('.pager-toolbar .pager-next')).click();
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element.all(by.css('.listview li[role="option"]')).count()).toEqual(10);
+    expect(await element(by.css('.listview li[role="option"]:first-child .listview-heading')).getText()).toEqual('Compressor 10');
+  });
+
+  it('can navigate to page 2, change page size, and reset', async () => {
+    await element(by.css('.pager-toolbar .pager-next')).click();
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element.all(by.css('.listview li[role="option"]')).count()).toEqual(10);
+    expect(await element(by.css('.listview li[role="option"]:first-child .listview-heading')).getText()).toEqual('Compressor 10');
+
+    await element(by.css('.pager-toolbar .pager-pagesize button')).click();
+    await browser.driver
+      .wait(protractor.ExpectedConditions.visibilityOf(await element(by.id('popupmenu-1'))), config.waitsFor);
+    await element(by.css('#popupmenu-1 li:nth-child(2) a')).click();
+    await browser.driver
+      .wait(protractor.ExpectedConditions.invisibilityOf(await element(by.id('popupmenu-1'))), config.waitsFor);
+
+    expect(await element.all(by.css('.listview li[role="option"]')).count()).toEqual(15);
+    expect(await element(by.css('.listview li[role="option"]:last-child .listview-heading')).getText()).toEqual('Compressor 14');
+  });
+});
+
 describe('Listview remove-clear tests', () => {
   beforeEach(async () => {
     await utils.setPage('/components/listview/remove-clear');
-    const listviewMultiSelectEl = await element(by.id('multiselect-listview'));
+    const listviewMultiSelectEl = await element(by.css('#multiselect-listview li'));
     await browser.driver
       .wait(protractor.ExpectedConditions.presenceOf(listviewMultiSelectEl), config.waitsFor);
   });
@@ -465,5 +510,60 @@ describe('Listview example-header-totals` tests', () => {
     await browser.driver.sleep(config.sleep);
 
     expect(await element(by.className('listview')).getCssValue('height')).toEqual('0px');
+  });
+});
+
+describe('Listview inside of List/Detail Pattern', () => {
+  beforeEach(async () => {
+    await utils.setPage('/patterns/list-detail-paging');
+    const listviewItem = await element(by.css('.listview li[role="option"]'));
+    await browser.driver
+      .wait(protractor.ExpectedConditions.presenceOf(listviewItem), config.waitsFor);
+  });
+
+  // Added for #922
+  it('should handle paging', async () => {
+    expect(await element.all(by.css('.listview li[role="option"]')).count()).toEqual(10);
+    expect(await element(by.css('.pager-toolbar.is-listview')).isPresent()).toBeTruthy();
+    expect(await element(by.css('.pager-toolbar .pager-prev')).isPresent()).toBeTruthy();
+    expect(await element(by.css('.pager-toolbar .pager-prev a')).getAttribute('disabled')).toBeTruthy();
+    expect(await element(by.css('.pager-toolbar .pager-next')).isPresent()).toBeTruthy();
+    expect(await element(by.css('.pager-toolbar .pager-next a')).getAttribute('disabled')).toBeFalsy();
+
+    await element(by.css('.pager-toolbar .pager-next')).click();
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element.all(by.css('.listview li[role="option"]')).count()).toEqual(2);
+    expect(await element(by.css('.pager-toolbar .pager-prev a')).getAttribute('disabled')).toBeFalsy();
+    expect(await element(by.css('.pager-toolbar .pager-next a')).getAttribute('disabled')).toBeTruthy();
+  });
+});
+
+describe('Listview with indeterminate paging inside of List/Detail Pattern', () => {
+  beforeEach(async () => {
+    await utils.setPage('/patterns/list-detail-paging-indeterminate');
+    const listviewItem = await element(by.css('.listview li[role="option"]'));
+    await browser.driver
+      .wait(protractor.ExpectedConditions.presenceOf(listviewItem), config.waitsFor);
+  });
+
+  it('should handle indeterminate paging', async () => {
+    expect(await element.all(by.css('.listview li[role="option"]')).count()).toEqual(20);
+    expect(await element(by.css('.listview li[role="option"]:first-child .listview-heading')).getText()).toEqual('Compressor 0');
+    expect(await element(by.css('.listview li[role="option"]:last-child .listview-heading')).getText()).toEqual('Compressor 19');
+    expect(await element(by.css('.pager-toolbar.is-listview')).isPresent()).toBeTruthy();
+    expect(await element(by.css('.pager-toolbar .pager-prev')).isPresent()).toBeTruthy();
+    expect(await element(by.css('.pager-toolbar .pager-prev a')).getAttribute('disabled')).toBeTruthy();
+    expect(await element(by.css('.pager-toolbar .pager-next')).isPresent()).toBeTruthy();
+    expect(await element(by.css('.pager-toolbar .pager-next a')).getAttribute('disabled')).toBeFalsy();
+
+    await element(by.css('.pager-toolbar .pager-next')).click();
+    await browser.driver.sleep(config.sleep);
+
+    expect(await element.all(by.css('.listview li[role="option"]')).count()).toEqual(20);
+    expect(await element(by.css('.listview li[role="option"]:first-child .listview-heading')).getText()).toEqual('Compressor 20');
+    expect(await element(by.css('.listview li[role="option"]:last-child .listview-heading')).getText()).toEqual('Compressor 39');
+    expect(await element(by.css('.pager-toolbar .pager-prev a')).getAttribute('disabled')).toBeFalsy();
+    expect(await element(by.css('.pager-toolbar .pager-next a')).getAttribute('disabled')).toBeFalsy();
   });
 });

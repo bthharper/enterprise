@@ -2,22 +2,18 @@
 //================================================== //
 
 .pager-toolbar {
-  @include font-size(14);
-
+  font-size: $theme-size-font-base;
   height: 38px;
   margin: 5px 10px;
   max-height: 38px;
   padding-top: 4px;
   text-align: center;
 
-  > * {
-    vertical-align: middle;
-  }
-
   > li {
     cursor: pointer;
     display: inline-block;
     overflow: hidden;
+    vertical-align: middle;
     width: auto;
 
     &.pager-no:hover {
@@ -71,7 +67,7 @@
         cursor: default;
 
         .icon {
-          fill: $pager-disabled-color;
+          color: $pager-disabled-color;
         }
       }
 
@@ -80,31 +76,19 @@
       }
     }
 
+    svg {
+      pointer-events: none;
+    }
+
   }
 
   li:not(.selected) a:hover:not([disabled]) svg {
-    fill: $pager-hover-color;
+    color: $pager-hover-color;
   }
 
   li:not(.selected) a:active:not([disabled]) svg {
-    fill: $pager-hover-color;
+    color: $pager-hover-color;
   }
-
-  &.is-listview {
-    .pager-prev,
-    .pager-next {
-      position: static;
-    }
-
-    li + .pager-count {
-      margin-top: 2px;
-    }
-
-    .pager-pagesize {
-      padding: 0;
-    }
-  }
-
 }
 
 // Buttons
@@ -116,9 +100,7 @@
   padding: 0;
 
   .icon {
-    fill: $font-color;
-    height: 17px;
-    width: 18px;
+    color: $font-color;
   }
 
   a {
@@ -143,14 +125,13 @@
 }
 
 .paginated li {
-  @include font-size(14);
+  font-size: $theme-size-font-base;
 }
 
 // Pager for Tables
 .pager-count {
-  @include font-size(14);
-
   display: inline-block;
+  font-size: $theme-size-font-base;
   line-height: normal;
   vertical-align: top;
 
@@ -161,8 +142,7 @@
   }
 
   input {
-    @include font-size(14);
-
+    font-size: $theme-size-font-base;
     height: 30px;
     margin: 0 5px;
     padding: 3px 0 !important;
@@ -197,8 +177,7 @@ li + .pager-count {
     }
 
     span {
-      @include font-size(14);
-
+      font-size: $theme-size-font-base;
       font-weight: $theme-number-font-weight-base;
       line-height: 27px;
       text-transform: none;
@@ -229,19 +208,6 @@ li + .pager-count {
     margin: 0;
   }
 
-  .pager-prev,
-  .pager-next {
-    position: absolute;
-  }
-
-  .pager-prev {
-    left: 15px;
-  }
-
-  .pager-next {
-    right: 15px;
-  }
-
   &.card .card-footer .pager-toolbar {
     height: 30px;
 
@@ -263,11 +229,6 @@ li + .pager-count {
   }
 }
 
-// Adjacent to Listview (list/detail & builder)
-.list-detail .listview + .pager-toolbar {
-  padding-top: 5px;
-}
-
 // RTL Styles
 html[dir='rtl'] {
   // Pager for Tables
@@ -279,11 +240,5 @@ html[dir='rtl'] {
     input {
       text-align: center;
     }
-  }
-}
-
-@include respond-to(phone) {
-  .pager-pagesize {
-    display: none !important;
   }
 }

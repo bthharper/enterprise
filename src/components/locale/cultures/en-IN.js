@@ -22,7 +22,9 @@ Soho.Locale.addCulture('en-IN', {
       month: 'd MMMM',
       year: 'MMMM, yyyy',
       timestamp: 'h:mm:ss a',
-      datetime: 'dd/MM/yyyy h:mm a'
+      datetime: 'dd/MM/yyyy h:mm a',
+      timezone: 'dd/MM/yyyy h:mm a zz',
+      timezoneLong: 'dd/MM/yyyy h:mm a zzzz'
     }, // Infered short + short gregorian/dateTimeFormats
     // ca-gregorian/main/dates/calendars/gregorian/days/format/short or abbreviated (2 digit)
     days: {
@@ -42,14 +44,15 @@ Soho.Locale.addCulture('en-IN', {
   }],
   // numbers/currencyFormats-numberSystem-latn/standard
   currencySign: '₹',
-  currencyFormat: '#,##,##0%',
+  currencyFormat: '###%',
   // numbers/symbols-numberSystem-latn
   numbers: {
     percentSign: '%',
-    percentFormat: '#,##0 %',
+    percentFormat: '### %',
     minusSign: '-',
     decimal: '.',
-    group: ','
+    group: ',',
+    groupSizes: [3, 2]
   },
   messages: {
     AboutText: { id: 'AboutText', value: 'Copyright &copy; {0} Infor. All rights reserved. The word and design marks set forth herein are trademarks and/or registered trademarks of Infor and/or its affiliates and subsidiaries. All rights reserved. All other trademarks listed herein are the property of their respective owners' },
@@ -229,7 +232,7 @@ Soho.Locale.addCulture('en-IN', {
     Minus: { id: 'Minus', value: 'Minus', comment: 'Minus tooltip' },
     Mobile: { id: 'Mobile', value: 'Mobile', comment: 'Indicates a mobile device (phone tablet ect)' },
     Month: { id: 'Month', value: 'Month', comment: 'As in a date month' },
-    More: { id: 'More', value: 'More...', comment: 'Text Indicating More Buttons or form content' },
+    More: { id: 'More', value: 'More', comment: 'Text Indicating More Buttons or form content' },
     MoreActions: { id: 'MoreActions', value: 'More Actions', comment: 'Text on the More Actions button indictating hidden functions' },
     MoveToLeft: { id: 'MoveToLeft', value: 'Move to left', comment: 'Button tooltip used in a list of movable items' },
     MoveToRight: { id: 'MoveToRight', value: 'Move to right', comment: 'Button tooltip used in a list of movable items' },

@@ -21,12 +21,13 @@ describe('Monthview API', () => {
     jasmine.clock().install();
     jasmine.clock().mockDate(new Date(2018, 10, 10));
 
-    Locale.addCulture('ar-SA', Soho.Locale.cultures['ar-SA']); //eslint-disable-line
-    Locale.addCulture('en-US', Soho.Locale.cultures['en-US']); //eslint-disable-line
-    Locale.addCulture('ja-JP', Soho.Locale.cultures['ja-JP']); //eslint-disable-line
-    Locale.addCulture('sv-SE', Soho.Locale.cultures['sv-SE']); //eslint-disable-line
-    Locale.addCulture('en-GB', Soho.Locale.cultures['en-GB']); //eslint-disable-line
-    Locale.addCulture('de-DE', Soho.Locale.cultures['de-DE']); //eslint-disable-line
+    Locale.addCulture('ar-SA', Soho.Locale.cultures['ar-SA'], Soho.Locale.languages['ar']); //eslint-disable-line
+    Locale.addCulture('en-US', Soho.Locale.cultures['en-US'], Soho.Locale.languages['en']); //eslint-disable-line
+    Locale.addCulture('ja-JP', Soho.Locale.cultures['ja-JP'], Soho.Locale.languages['ja']); //eslint-disable-line
+    Locale.addCulture('sv-SE', Soho.Locale.cultures['sv-SE'], Soho.Locale.languages['sv']); //eslint-disable-line
+    Locale.addCulture('en-GB', Soho.Locale.cultures['en-GB'], Soho.Locale.languages['en']); //eslint-disable-line
+    Locale.addCulture('de-DE', Soho.Locale.cultures['de-DE'], Soho.Locale.languages['de']); //eslint-disable-line
+    Locale.addCulture('da-DK', Soho.Locale.cultures['da-DK'], Soho.Locale.languages['da']); //eslint-disable-line
     Locale.set('en-US');
     Soho.Locale.set('en-US'); //eslint-disable-line
 
@@ -82,6 +83,19 @@ describe('Monthview API', () => {
     expect(document.body.querySelector('thead tr th:first-child').textContent.trim()).toEqual('السبت');
     expect(document.body.querySelector('tbody tr:first-child td:first-child').textContent.trim()).toEqual('25');
     expect(document.body.querySelector('tbody tr:first-child td:last-child').textContent.trim()).toEqual('1');
+  });
+
+  it('Should render based on locale setting', () => {
+    monthviewAPI.destroy();
+    monthviewAPI = new MonthView(monthviewEl, {
+      month: 4,
+      year: 2019,
+      locale: 'da-DK'
+    });
+
+    expect(document.getElementById('monthview-datepicker-field').value).toEqual('maj 2019');
+    expect(document.body.querySelector('thead tr th:first-child').textContent.trim()).toEqual('søn');
+    expect(document.body.querySelector('thead tr th:last-child').textContent.trim()).toEqual('lør');
   });
 
   it('Should render disabled days', () => {

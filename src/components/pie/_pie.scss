@@ -12,20 +12,20 @@
   // Label and Line Colors
   .tspan,
   .lines circle {
-    fill: $chart-font-color;
+    color: $chart-font-color;
   }
 
   .label-text {
-    @include font-size(14);
+    font-size: $theme-size-font-base;
   }
 
   .label-line {
-    fill: none;
+    color: none;
     stroke-width: 2px;
   }
 
   polyline {
-    fill: none;
+    color: none;
     shape-rendering: crispEdges;
     stroke: $chart-font-color;
     stroke-width: 1px;
@@ -33,7 +33,7 @@
 
   .labels text {
     color: $chart-font-color;
-    font-size: 12px;
+    font-size: $theme-size-font-sm;
   }
 
   .slices path {
