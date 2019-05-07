@@ -1,8 +1,12 @@
 /* eslint-disable no-underscore-dangle */
+require('../../../src/components/locale/cultures/ar-EG.js');
+require('../../../src/components/locale/cultures/en-US.js');
+require('../../../src/components/locale/cultures/fr-FR.js');
 
 describe('Mask Input Field Api', () => {
   let TEST_INPUT = null;
   let TEST_COMPONENT_API = null;
+  const Locale = window.Soho.Locale;
 
   beforeAll(() => {
     // Setup the input field used for this test suite
@@ -10,6 +14,13 @@ describe('Mask Input Field Api', () => {
     TEST_INPUT.setAttribute('type', 'text');
     TEST_INPUT.setAttribute('id', 'masked');
     document.body.appendChild(TEST_INPUT);
+    Locale.getLocale('ar-EG');
+    Locale.getLocale('fr-FR');
+    Locale.set('en-US');
+  });
+
+  beforeEach(() => {
+    Locale.set('en-US');
   });
 
   it('Should pass a basic sanity test', () => {
@@ -134,6 +145,7 @@ describe('Mask Input Field Api', () => {
   });
 
   it('Should be able to handle alternate characters for decimal, comma, and currency symbol)', () => {
+    Locale.set('fr-FR');
     // From SOHO-4744 - We simulates the french locale (fr-FR)
     const input = document.createElement('input');
     input.setAttribute('type', 'text');
@@ -141,6 +153,7 @@ describe('Mask Input Field Api', () => {
     input.setAttribute('value', '5333,66');
 
     const inputComponent = new window.Soho.components.MaskInput(input, {
+      locale: 'fr-FR',
       process: 'number',
       pattern: '# ###,00',
       patternOptions: {
@@ -161,10 +174,11 @@ describe('Mask Input Field Api', () => {
     expect(inputComponent.settings.patternOptions.symbols.decimal).toEqual(',');
     expect(inputComponent.settings.patternOptions.symbols.thousands).toEqual(' ');
     expect(inputComponent.settings.patternOptions.symbols.currency).toEqual('€');
-    expect(input.value).toEqual('5 333,66 €');
+    expect(input.value).toEqual('5 333,66 €');
   });
 
   it('Should display reversed prefix/suffix when in RTL mode', () => {
+    Locale.set('ar-EG');
     // From  (SOHO-3259)
     // simulates locale 'ar-EG'
     const input = document.createElement('input');
@@ -173,6 +187,7 @@ describe('Mask Input Field Api', () => {
     input.setAttribute('value', '123456789');
 
     const inputComponent = new window.Soho.components.MaskInput(input, {
+      locale: 'ar-EG',
       process: 'number',
       pattern: '#٬###٬###-',
       patternOptions: {
