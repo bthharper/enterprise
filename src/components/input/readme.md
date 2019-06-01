@@ -20,6 +20,8 @@ demo:
     slug: example-clearable
   - name: Input with Right Click Context Menu
     slug: example-contextmenu
+  - name: Input with Accessible Required Labels
+    slug: example-required-fields
 ---
 
 The Text Input Field supports both unstructured and structured entries. Certain types of values (such as phone numbers, credit card numbers, part codes, even decimal values, etc.) may have more complex formatting rules than simple text and decimal entries. You can use smart (forgiving) and structured formats within a text input field to support more of these types of values.
@@ -41,12 +43,12 @@ With structured formatting, the system requires values be entered in a specific 
 
 A standard Text Input is a basic input element with `type="text"`. Password type can also be used. To implement one, create an input element with `type="text"`. You can also add various related features, some of these are separate components documented on separate pages, including:
 
-- [Masking](../mask) - We include a mask component to handle structured formatting.
+- [Masking](./mask) - We include a mask component to handle structured formatting.
 - Placeholder - Is supported on most input fields via the standard `placeholder` attribute. This should only be used in certain cases and not on EVERY form field
-- [Tooltip](../tooltip) - We include a tooltip component to handle stylized tooltips. This is supported on most input fields via the standard `title` attribute and invoking the tooltip plugin
-- [Required](../validation) Is a special type of validation. This is handled via the validation plugin.
-- [Validation](../validation) Allows you to customize alerts and errors on a field.
-- [Dirty Indicator](../trackdirty) We include a plugin to track if the field is modified and show a small indicator.
+- [Tooltip](./tooltip) - We include a tooltip component to handle stylized tooltips. This is supported on most input fields via the standard `title` attribute and invoking the tooltip plugin
+- [Required](./validation) Is a special type of validation. This is handled via the validation plugin.
+- [Validation](./validation) Allows you to customize alerts and errors on a field.
+- [Dirty Indicator](./trackdirty) We include a plugin to track if the field is modified and show a small indicator.
 - Enabled/Read-only - Is supported on most input fields via the standard `disabled` and `readonly` attributes.
 
 ```html
